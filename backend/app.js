@@ -27,18 +27,6 @@ io.on('connection', (socket) => {
     })
 });
 
-// App routes
-app.get('/greeting', async (req, res) => {
-    // res.json({ message: 'Ola Amigos!' });
-    Round.findAll({ where: { game_id: 2 }, include: 'Participants' })
-    .then(data => {
-        return res.json(data);
-    })
-    .catch(err => {
-        return res.json(`Error: ${err}`)
-    })
-});
-
 // Temporary route to test the database connection
 app.get('/test', (req, res) => {
     sequelize
