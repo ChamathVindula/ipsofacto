@@ -27,7 +27,7 @@ module.exports = (socket, io) => {
             socket.emit('room_not_found');
             return;
         }
-        const room = hydrateRoom(roomData); // Create a room instance from the existing room data
+        const room = hydrateRoom(roomData);     // Create a room instance from the existing room data
 
         // Might have to find a workaround to allow players to join 
         // while a game is in progress later
@@ -40,11 +40,11 @@ module.exports = (socket, io) => {
             socket.emit('player_already_in_room', room.getPlayers());
             return;
         }
-        room.addPlayer(player_id);      // Add the player to game state
-        socket.join(room.getRoomId());  // Add the player to the socket room
-        persistRoom(room);              // Save the updated room state to Redis
+        room.addPlayer(player_id);                                              // Add the player to game state
+        socket.join(room.getRoomId());                                          // Add the player to the socket room
+        persistRoom(room);                                                      // Save the updated room state to Redis
         socket.to(room.getRoomId()).emit('player_joined', room.getPlayers());   // Emit the updated room data to all other players in the room
-        socket.emit('room_joined', room.getPlayers());  // Emit the updated room data to the joining player
+        socket.emit('room_joined', room.getPlayers());                          // Emit the updated room data to the joining player
     }
 
     const leaveRoom = () => {

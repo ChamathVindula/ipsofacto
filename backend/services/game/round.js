@@ -47,6 +47,10 @@ class Round {
     
     generateQuestions() {
         // Use chatgpt api to generate questions
+        for(let i = 0; i < this.number_of_questions; i++) {
+            const question = new Question(`Question ${i+1}`, `Answer ${i+1}`, [`Distractor ${1}`, `Distractor ${2}`, `Distractor ${3}`]);
+            this.questions.push(question);
+        }
     }
     
     hydrateQuestions(questions) {

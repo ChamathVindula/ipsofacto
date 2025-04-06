@@ -3,6 +3,8 @@ const express = require('express');
 const { Server } = require('socket.io');
 require('dotenv').config();
 const sequelize = require('./config/database');
+const registerRoomHandlers = require('./handlers/roomHandler');
+const registerGameHandlers = require('./handlers/gameHandler');
 
 // Express app
 const app = express();
@@ -20,6 +22,8 @@ const io = new Server(server, {
 const onConnection = (socket) => {
   // Register all even handlers here
   // Pass the socket and io instance to the event handlers
+  registerRoomHandlers(socket, io);
+  registerGameHandlers(socket, io);
 }
 
 // Listening in on incoming socket connections
