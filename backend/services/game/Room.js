@@ -1,6 +1,5 @@
-import redisClient from '../config/redisClient.js';
-import { v4 as uuidv4 } from 'uuid';
-import Game from './game/game.js';
+const Game = require('./game');
+const { v4: uuidv4 } = require('uuid');
 
 class Room {
     /**
@@ -29,6 +28,10 @@ class Room {
         return this.players;
     }
 
+    gameInProgress() {
+        return this.game && this.game.gameInProgress();
+    }
+
     hydrate(room) {
         this.roomId = room.roomId;
         this.roomCode = room.roomCode;
@@ -38,7 +41,14 @@ class Room {
     }
 
     setGame(game) {
-        this.game = new Game(game.status, game.points_per_question, game.number_of_rounds, game.current_round, game.rounds);
+        this.game = new Game(
+            game.player_count ?? this.players.length, game.status, 
+            game.points_per_question, game.number_of_rounds, 
+            game.current_round, game.rounds);
+    }
+
+    game() {
+        return this.game;
     }
 
     generateRoomId() {
@@ -57,6 +67,10 @@ class Room {
         this.players.push(player);
     }
 
+    playerExists(player_id) {
+        return this.players.some(player => player.id === player_id);
+    }
+
     removePlayer(playerId) {
         this.players = this.players.filter(player => player.id !== playerId);
     }
@@ -72,34 +86,4 @@ class Room {
     }
 }
 
-module.exports.createRoom = (host) => {
-    return new Room(host);
-}
-
-module.exports.hydrateRoom = (room_data) => {
-    const room = new Room();
-
-    room.hydrate(roomData);
-}
-
-module.exports.persistRoom = (room) => {
-    try {
-        const ROOM_PREFIX = process.env.REDIS_ROOM_PREFIX || 'ipsft_game_room';
-    
-        const key = `${ROOM_PREFIX}${room.getRoomId()}`;
-    
-        redisClient.set(key, JSON.stringify(room.serialise()));
-
-        return true;
-    } catch(error) {
-        return false;
-    }
-}
-
-module.exports.getRoom = (roomId) => {
-    const ROOM_PREFIX = process.env.REDIS_ROOM_PREFIX || 'ipsft_game_room';
-
-    const key = `${ROOM_PREFIX}${roomId}`;
-
-    return redisClient.get(key);
-}
+module.exports = Room;

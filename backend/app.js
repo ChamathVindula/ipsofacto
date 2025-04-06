@@ -3,7 +3,6 @@ const express = require('express');
 const { Server } = require('socket.io');
 require('dotenv').config();
 const sequelize = require('./config/database');
-const { Game, Round } = require('./models');
 
 // Express app
 const app = express();
@@ -18,14 +17,13 @@ const io = new Server(server, {
     }
 });
 
-// Listening in on incoming socket connections
-io.on('connection', (socket) => {
-    console.log('A user just connected');
+const onConnection = (socket) => {
+  // Register all even handlers here
+  // Pass the socket and io instance to the event handlers
+}
 
-    socket.on('disconnect', () => {
-        console.log('A user just disconnected');
-    })
-});
+// Listening in on incoming socket connections
+io.on('connection', onConnection);
 
 // Temporary route to test the database connection
 app.get('/test', (req, res) => {

@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require('uuid');
+
 class Question {
     /**
      * 
@@ -7,10 +9,15 @@ class Question {
      * @param {object} scores 
      */
     constructor(question, anwser, distractions, scores = {}) {
+        this.id = uuidv4();
         this.question = question;
         this.anwser = anwser;
         this.distractions = distractions;
         this.scores = scores;   // {player_id: score}
+    }
+
+    getId() {
+        return this.id;
     }
 
     getQuestion() {
@@ -21,11 +28,15 @@ class Question {
         return [...this.distractions, this.anwser].sort(() => Math.random() - 0.5);
     }
 
+    getScores() {
+        return this.scores;
+    }
+
     getAnswer() {
         return this.anwser;
     }
 
-    setScore(player_id, score) {
+    setPlayerAnswer(player_id, score) {
         this.scores[player_id] = score;
     }
 
@@ -35,6 +46,7 @@ class Question {
 
     serialise() {
         return {
+            id: this.id,
             question: this.question,
             anwser: this.anwser,
             distractions: this.distractions,
@@ -43,4 +55,4 @@ class Question {
     }
 }
 
-export default Question;
+module.exports = Question;

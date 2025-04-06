@@ -1,4 +1,4 @@
-const Question = require('./question.js');
+const Question = require('./Question.js');
 
 class Round {
     /**
@@ -19,32 +19,53 @@ class Round {
         this.time_per_question = time_per_question;
         this.questions = questions.length ? this.hydrateQuestions(questions) : [];
         this.current_question = current_question;
+        this.players_answered = 0;
     }
 
+    complete() {
+        this.status = 'completed';
+    }
+    
+    getQuestions() {
+        if(!this.questions.length) return [];
+        
+        return this.questions.map(question => {
+            return {
+                question: question.getQuestion(),
+                choices: question.getChoices(),
+                answer: question.getAnswer()
+            }
+        });
+    }
+
+    getScores() {
+        return this.questions.reduce((acc, question) => {
+            acc[question.getId()] = question.getScores();
+            return acc;
+        }, {});
+    }
+    
+    generateQuestions() {
+        // Use chatgpt api to generate questions
+    }
+    
     hydrateQuestions(questions) {
         this.questions = questions.map(question => {
             return new Question(question.question, question.answer, question.distractions, question.scores);
         });
     }
 
-    generateQuestions() {
-        // Use chatgpt api to generate questions
+    pushPlayerAnswers(player_id, answers) {
+        this.questions.forEach((question) => {
+            if(answers[question.getId()] !== undefined) {
+                question.setPlayerAnswer(player_id, answers[question.getId()]);
+            }
+        });
+        this.players_answered++;
     }
 
-    getQuestion() {
-        let question = this.questions[this.current_question];
-        
-        if(!question) return null;
-
-        return {
-            question: question.getQuestion(),
-            choices: question.getChoices(),
-            answer: question.getAnswer()
-        }
-    }
-
-    updateScore(question_index, player_id, score) {
-        //...
+    playersAnswered() {
+        return this.players_answered;
     }
 
     moveToNextQuestion() {
@@ -64,4 +85,4 @@ class Round {
     }
 }
 
-export default Round;
+module.exports = Round;
