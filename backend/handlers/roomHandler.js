@@ -29,8 +29,6 @@ module.exports = (socket, io) => {
         }
         const room = hydrateRoom(roomData);     // Create a room instance from the existing room data
 
-        // Might have to find a workaround to allow players to join 
-        // while a game is in progress later
         if(room.gameInProgress()) {
             socket.emit('game_in_progress');
             return;

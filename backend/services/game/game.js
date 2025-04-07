@@ -18,6 +18,10 @@ class Game {
         this.rounds = rounds.length ? this.hydrateRounds(rounds) : [];
     }
 
+    getCurrentRoundNumber() {
+        return this.current_round;
+    }
+
     endRound() {
         this.rounds[this.current_round-1].complete();
     }

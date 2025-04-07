@@ -1,5 +1,5 @@
-const redisClient = require('../utils/redisClient');
-const Room = require('./game/Room.js');
+const redisClient = require('../config/redisClient.js');
+const Room = require('../services/game/Room');
 
 /**
  * Creates a new game room session.

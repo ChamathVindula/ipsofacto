@@ -1,6 +1,13 @@
 const { getRoom, hydrateRoom, persistRoom } = require('../utils/gameStateUtils');
 
 module.exports = (socket, io) => {
+    /**
+     * Create a new game and assign it to a specific room.
+     * 
+     * @param {string} room_id 
+     * @param {number} points_per_question 
+     * @param {number} number_of_rounds 
+     */
     const startGame = (room_id, points_per_question, number_of_rounds) => {
         const status = 'in_progress';
         const roomData = getRoom(room_id);
@@ -29,6 +36,15 @@ module.exports = (socket, io) => {
         //...
     }
 
+    /**
+     * Initiate a new round of an active game in a specific room.
+     * 
+     * @param {string} room_id 
+     * @param {string} genre 
+     * @param {string} difficulty 
+     * @param {number} number_of_questions 
+     * @param {number} time_per_question 
+     */
     const startRound = (room_id, genre, difficulty, number_of_questions, time_per_question) => {
         const status = 'in_progress';
         const roomData = getRoom(room_id);
@@ -38,6 +54,11 @@ module.exports = (socket, io) => {
             return;
         }
         const room = hydrateRoom(roomData);
+        
+        if(!room.gameInProgress()) {
+            socket.emit('game_not_in_progress');
+            return;
+        }
         room.game().createRound(status, genre, difficulty, number_of_questions, time_per_question);
 
         persistRoom(room); // Save the updated room state to Redis
@@ -48,6 +69,15 @@ module.exports = (socket, io) => {
         socket.emit('start_round', round, startRoundAt, questions); // Notify all players in the room that the round is starting
     }
 
+    /**
+     * Save the player's answer to the game state.
+     * If all players have finished the round, notify all 
+     * players in the room that the round is finished.
+     * 
+     * @param {string} room_id 
+     * @param {string} player_id 
+     * @param {object} answers 
+     */
     const pushAnwsers = (room_id, player_id, answers) => {
         const roomData = getRoom(room_id);
 
@@ -62,15 +92,14 @@ module.exports = (socket, io) => {
             return;
         }
         room.game().pushPlayerAnwsers(player_id, answers);  // Push the player's answers to the game state
-
-        // Check if all players have finished the round
+        persistRoom(room);
+        
+        // Notify all players if the round has ended
         if(room.game().allPlayersFinishedCurrentRound()) {
-            const round = room.game().current_round;
+            const round = room.game().getCurrentRoundNumber();
             const scores = room.game().getScoresOfCurrentRound();
-            socket.emit('round_finished', round, scores);   // Notify all players in the room that the round is finished
+            socket.emit('round_finished', round, scores);
         }
-
-        persistRoom(room); // Save the updated room state to Redis
     }
 
     socket.on('start_game', startGame);

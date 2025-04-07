@@ -5,6 +5,7 @@ require('dotenv').config();
 const sequelize = require('./config/database');
 const registerRoomHandlers = require('./handlers/roomHandler');
 const registerGameHandlers = require('./handlers/gameHandler');
+const redisClient = require('./config/redisClient.js');
 
 // Express app
 const app = express();
