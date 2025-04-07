@@ -3,3 +3,6 @@
 
 # Ignore .env files in all directories
 **/.env
+
+#Ignore the DS_Store files
+**/.DS_Store
