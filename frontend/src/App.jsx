@@ -48,6 +48,10 @@ function App() {
         <button onClick={connect}>Connect</button>
         <button onClick={disconnect}>Disconnect</button>
       </div>
+
+      <h1 className="text-3xl font-bold underline">
+    Hello world!
+  </h1>
       
       <div className='actions_list'>
         {
