@@ -1,1 +1,62 @@
 @import "tailwindcss";
+
+@theme {
+    --color-mossgreen-light: #1DCD9F;
+    --color-mossgreen-dark: #169976;
+    --color-grey-dark: #222222;
+
+    --color-properpurple: #591FCE;
+    --color-propertaqua: #0C9CEE;
+    --color-properteal: #3DBDC2;
+    --color-limegreen: #A1F480;
+
+    --color-soothingbg: #F8FAFC;
+}
+
+.sour-gummy-light {
+    font-family: "Sour Gummy", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    font-variation-settings:
+        "wdth" 100;
+}
+
+.sour-gummy-medium {
+    font-family: "Sour Gummy", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 450;
+    font-style: normal;
+    font-variation-settings:
+        "wdth" 100;
+}
+
+.sour-gummy-bold {
+    font-family: "Sour Gummy", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 900;
+    font-style: normal;
+    font-variation-settings:
+        "wdth" 100;
+}
+
+.lexend-light {
+    font-family: "Lexend", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+}
+
+.lexend-medium {
+    font-family: "Lexend", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 450;
+    font-style: normal;
+}
+
+.lexend-bold {
+    font-family: "Lexend", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 900;
+    font-style: normal;
+}
