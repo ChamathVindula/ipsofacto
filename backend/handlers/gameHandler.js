@@ -105,6 +105,5 @@ module.exports = (socket, io) => {
     socket.on('start_game', startGame);
     socket.on('end_game', endGame);
     socket.on('start_round', startRound);
-    socket.on('push_player_answer', pushPlayerAnswer);
     socket.on('player_finshed_round', pushAnwsers);
 }
