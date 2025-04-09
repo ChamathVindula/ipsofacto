@@ -4,6 +4,7 @@ import GenreSelector from "../components/GenreSelector";
 import QuestionCountSelector from "../components/QuestionCountSelector";
 import QuestionTimeLimitSelector from "../components/QuestionTimeLimitSelector";
 import QuestionDifficultySelector from "../components/QuestionDifficultySelector";
+import Banner from "../components/Banner";
 
 function RoundLobby() {
     const [genre, setGenre] = useState([
@@ -71,6 +72,7 @@ function RoundLobby() {
                 step={1}
                 onChangeHandler={timePerQuestionHandler}
             />
+            {/* <Banner message="Get ready its about to get silly &#128515;" /> */}
         </div>
     );
 }
