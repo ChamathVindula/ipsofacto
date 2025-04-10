@@ -1,10 +1,13 @@
 import './App.css';
 import { RouterProvider } from 'react-router';
 import router from './router';
+import SocketProvider from './context/SocketProvider';
 
 function App() {
   return (
-    <RouterProvider router={router} />
+    <SocketProvider>
+        <RouterProvider router={router} />
+    </SocketProvider>
   );
 }
 

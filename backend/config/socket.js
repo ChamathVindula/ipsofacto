@@ -11,10 +11,11 @@ module.exports = (httpServer) => {
     });
     
     const connectionHandler = (socket) => {
-      // Register all even handlers here
-      // Pass the socket and io instance to the event handlers
-      registerRoomHandlers(socket, io);
-      registerGameHandlers(socket, io);
+        console.log('New event handled');
+        // Register all even handlers here
+        // Pass the socket and io instance to the event handlers
+        registerRoomHandlers(socket, io);
+        registerGameHandlers(socket, io);
     }
     
     // Listening in on incoming socket connections
