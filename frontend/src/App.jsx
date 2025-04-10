@@ -1,18 +1,10 @@
 import './App.css';
-import Layout from './components/Layout';
-import HomePage from './pages/HomePage';
-import GameLobby from './pages/GameLobby';
-import RoundLobby from './pages/RoundLobby';
-import Game from './pages/Game';
+import { RouterProvider } from 'react-router';
+import router from './router';
 
 function App() {
   return (
-    <Layout>
-      {/* <HomePage /> */}
-      {/* <GameLobby /> */}
-      {/* <RoundLobby /> */}
-      <Game />
-    </Layout>
+    <RouterProvider router={router} />
   );
 }
 

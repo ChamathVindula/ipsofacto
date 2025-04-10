@@ -12,8 +12,8 @@ function PlayerCard({ playerDetails }) {
     ]; 
     return (
         <CardSmall>
-            <div class="w-20 h-20 rounded-full overflow-hidden shadow-sm mx-auto">
-                <img src="/public/user.png" alt="Avatar" class="w-full h-full object-cover" />
+            <div className="w-20 h-20 rounded-full overflow-hidden shadow-sm mx-auto">
+                <img src="/public/user.png" alt="Avatar" className="w-full h-full object-cover" />
             </div>
             <div className="player_name my-2">
                 <p className="mx-auto text-center text-3xl sour-gummy-medium">{playerDetails.name ?? 'Player Name'}</p>
