@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { useSocket } from "../context/SocketProvider";
+import { useRoom } from "../context/RoomProvider";
 
 function GameSetup() {
     const [roundCount, setRoundCount] = useState(1);
     const [pointsPerQuestion, setPointsPerQuestion] = useState(0.5);
+    const room = useRoom();
+    const socket = useSocket();
 
     const roundCountChangeHandler = (event) => {
         setRoundCount(event.target.value);
@@ -14,7 +18,7 @@ function GameSetup() {
 
     const formSubmitHandler = (event) => {
         event.preventDefault();
-        //...
+        socket.emit('start_game', room.data.roomId, pointsPerQuestion, roundCount);
     }
 
     return (

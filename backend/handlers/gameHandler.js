@@ -8,16 +8,16 @@ module.exports = (socket, io) => {
      * @param {number} points_per_question 
      * @param {number} number_of_rounds 
      */
-    const startGame = (room_id, points_per_question, number_of_rounds) => {
+    const startGame = async (room_id, points_per_question, number_of_rounds) => {
         const status = 'in_progress';
-        const roomData = getRoom(room_id);
+        const roomData = await getRoom(room_id);
         
         if(!roomData) {
             socket.emit('room_not_found');
             return;
         }
         const room = hydrateRoom(roomData);             // Create a room instance from the existing room data
-        
+
         if(room.gameInProgress()) {
             return;
         }
@@ -29,6 +29,7 @@ module.exports = (socket, io) => {
             rounds: []
         }
         room.setGame(gameData);
+        persistRoom(room); // Save the updated room state to Redis
         socket.emit('game_starting', room.serialise()); // Notify all players in the room that the game is starting
     }
     
@@ -45,9 +46,9 @@ module.exports = (socket, io) => {
      * @param {number} number_of_questions 
      * @param {number} time_per_question 
      */
-    const startRound = (room_id, genre, difficulty, number_of_questions, time_per_question) => {
+    const startRound = async (room_id, genre, difficulty, number_of_questions, time_per_question) => {
         const status = 'in_progress';
-        const roomData = getRoom(room_id);
+        const roomData = await getRoom(room_id);
         
         if(!roomData) {
             socket.emit('room_not_found');

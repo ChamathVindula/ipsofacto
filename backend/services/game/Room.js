@@ -14,6 +14,7 @@ class Room {
         this.host = host;
         this.players = [host];
         this.game = null;
+        return this;
     }
 
     getRoomId() {
@@ -41,6 +42,8 @@ class Room {
     }
 
     setGame(game) {
+        if(!game) return;
+
         this.game = new Game(
             game.player_count ?? this.players.length, game.status, 
             game.points_per_question, game.number_of_rounds, 
@@ -57,7 +60,7 @@ class Room {
 
     generateRoomCode(roomId) {
         // The room id is a uuid, so we can take the third character of each segment
-        return roomId.split('-'),map(segment => segment[2]).join('');
+        return roomId.split('-').map(segment => segment[2]).join('');
     }
 
     addPlayer(player) {
@@ -81,7 +84,7 @@ class Room {
             roomCode: this.roomCode,
             host: this.host,
             players: this.players,
-            game: this.game.serialise()
+            game: this.game ? this.game.serialise() : null
         }
     }
 }

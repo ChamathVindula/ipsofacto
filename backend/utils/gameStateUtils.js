@@ -18,7 +18,9 @@ module.exports.createRoom = (host) => {
  * @returns {Room}
  */
 module.exports.hydrateRoom = (room_data) => {
-    return new Room().hydrate(room_data);
+    let room = new Room();
+    room.hydrate(room_data);
+    return room;
 }
 
 /**
@@ -28,17 +30,9 @@ module.exports.hydrateRoom = (room_data) => {
  * @returns {boolean}
  */
 module.exports.persistRoom = (room) => {
-    try {
-        const ROOM_PREFIX = process.env.REDIS_ROOM_PREFIX || 'ipsft_game_room:';
-    
-        const key = `${ROOM_PREFIX}${room.getRoomId()}`;
-    
-        redisClient.set(key, JSON.stringify(room.serialise()));
-
-        return true;
-    } catch(error) {
-        return false;
-    }
+    const ROOM_PREFIX = process.env.REDIS_ROOM_PREFIX || 'ipsft_game_room:';
+    const key = `${ROOM_PREFIX}${room.getRoomId()}`;
+    redisClient.set(key, JSON.stringify(room.serialise()));
 }
 
 /**
@@ -48,13 +42,20 @@ module.exports.persistRoom = (room) => {
  * @returns {Room|null}
  */
 module.exports.getRoom = (roomId) => {
-    try {
-        const ROOM_PREFIX = process.env.REDIS_ROOM_PREFIX || 'ipsft_game_room:';
-    
-        const key = `${ROOM_PREFIX}${roomId}`;
-    
-        return redisClient.get(key);
-    } catch(error) {
-        return null;
-    }
+    const ROOM_PREFIX = process.env.REDIS_ROOM_PREFIX || 'ipsft_game_room:';
+
+    const key = `${ROOM_PREFIX}${roomId}`;
+
+    return new Promise((resolve, reject) => {
+        redisClient.get(key, (err, data) => {
+            if(err) return reject(err);
+            if(!data) return resolve(null);
+
+            try {
+                resolve(JSON.parse(data));
+            } catch (error) {
+                reject(error);
+            }
+        });
+    })
 }

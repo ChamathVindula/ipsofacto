@@ -5,8 +5,15 @@ import QuestionCountSelector from "../components/QuestionCountSelector";
 import QuestionTimeLimitSelector from "../components/QuestionTimeLimitSelector";
 import QuestionDifficultySelector from "../components/QuestionDifficultySelector";
 import Banner from "../components/Banner";
+import { useSocket } from "../context/SocketProvider";
+import { useRoom } from "../context/RoomProvider";
+import { useNavigate } from "react-router";
 
 function RoundLobby() {
+    const socket = useSocket();
+    const room = useRoom();
+    const navigate = useNavigate();
+
     const [genre, setGenre] = useState([
         { id: 1, name: "Science", color: "#FF5733" },
         { id: 2, name: "History", color: "#33FF57" },
@@ -41,6 +48,11 @@ function RoundLobby() {
         setTimePerQuestion(time*1000); // Convert to milliseconds
     }
 
+    let onClickHandler = (e) => {
+        let roomId = room.data.roomId;
+        socket.emit("start_round", roomId, selectedGenre.name, selectedDifficulty, numberOfQuestions, timePerQuestion);
+    }
+
     let settings = {
         genre: selectedGenre?.name,
         difficulty: selectedDifficulty,
@@ -48,7 +60,17 @@ function RoundLobby() {
     }
 
     useEffect(() => {
-        //...
+        if(!socket) return;
+
+        socket.on('start_round', (round, startRoundAt, questions) => {
+            console.log("Round starting, redirecting to the round...");
+            // room.dispatch({ type: "INIT_ROUND", payload: { round, startRoundAt, questions } });
+            // navigate("/round");
+        });
+
+        return () => {
+            socket.off('start_round');
+        }
     }, []);
 
     return (
@@ -72,6 +94,17 @@ function RoundLobby() {
                 step={1}
                 onChangeHandler={timePerQuestionHandler}
             />
+            <div className="flex flex-col justify-center items-center mt-4">
+                <button 
+                    className="border-1 border-mossgreen-dark text-mossgreen-dark 
+                            font-bold py-2 px-4 rounded-sm hover:bg-mossgreen-dark 
+                            transition duration-300 cursor-pointer w-full
+                            hover:text-white hover:border-mossgreen-dark"
+                    onClick={onClickHandler}
+                >
+                    Start Round
+                </button>
+            </div>
             {/* <Banner message="Get ready its about to get silly &#128515;" /> */}
         </div>
     );

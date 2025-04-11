@@ -6,12 +6,22 @@ module.exports = (socket, io) => {
      * 
      * @param {string} player_id 
      */
-    const createRoom = (player_id) => {
+    const createRoom = (player_id, room_name) => {
         const newRoom = makeRoom(player_id);    // Create a new game room session
         const roomId = newRoom.getRoomId();
+        const roomCode = newRoom.getRoomCode();
         socket.join(roomId);                    // Add the host to the room
         persistRoom(newRoom);                   // Save the room state to Redis
-        socket.emit('room_created', roomId);    // Emit the room ID to the host
+        
+        // Emit the room data back to the host
+        socket.emit('room_created', {
+            roomId: roomId,
+            roomName: room_name,
+            roomCode: roomCode,
+            host: player_id,
+            isHost: true,
+            players: newRoom.getPlayers()
+        });
     }
 
     /**
