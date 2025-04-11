@@ -30,11 +30,7 @@ class Round {
         if(!this.questions.length) return [];
         
         return this.questions.map(question => {
-            return {
-                question: question.getQuestion(),
-                choices: question.getChoices(),
-                answer: question.getAnswer()
-            }
+            return question.getCompiledQuestion();
         });
     }
 
@@ -45,17 +41,28 @@ class Round {
         }, {});
     }
     
+    createQuestion(question_data) {
+        return new Question(question_data.question, question_data.answer, question_data.distractions);
+    }
+
     generateQuestions() {
         // Use chatgpt api to generate questions
         for(let i = 0; i < this.number_of_questions; i++) {
-            const question = new Question(`Question ${i+1}`, `Answer ${i+1}`, [`Distractor ${1}`, `Distractor ${2}`, `Distractor ${3}`]);
+            let question = this.createQuestion({
+                question: `Question ${i+1}`,
+                answer: `Answer ${i+1}`,
+                distractions: [`Distractor ${1}`, `Distractor ${2}`, `Distractor ${3}`]
+            });
             this.questions.push(question);
         }
     }
     
     hydrateQuestions(questions) {
-        this.questions = questions.map(question => {
-            return new Question(question.question, question.answer, question.distractions, question.scores);
+        if(!questions.length) return [];
+
+        return questions.map(question => {
+            console.log('Hydrating question:', question);
+            return this.createQuestion(question);
         });
     }
 

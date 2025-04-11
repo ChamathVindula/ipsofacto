@@ -32,6 +32,7 @@ module.exports.hydrateRoom = (room_data) => {
 module.exports.persistRoom = (room) => {
     const ROOM_PREFIX = process.env.REDIS_ROOM_PREFIX || 'ipsft_game_room:';
     const key = `${ROOM_PREFIX}${room.getRoomId()}`;
+    console.log('Persisting the serialised room:', JSON.stringify(room.serialise()));
     redisClient.set(key, JSON.stringify(room.serialise()));
 }
 

@@ -4,6 +4,7 @@ import HomePage from '../pages/HomePage';
 import GameLobby from '../pages/GameLobby';
 import RoundLobby from '../pages/RoundLobby';
 import Game from '../pages/Game';
+import Results from '../pages/Results';
 
 const router = createBrowserRouter([
     {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
             {
                 path: "play",
                 Component: Game
+            },
+            {
+                path: "outcome",
+                Component: Results
             }
         ]
     }

@@ -1,33 +1,60 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GameCard from "../components/GameCard";
+import { useSocket } from "../context/SocketProvider";
+import { useRoom } from "../context/RoomProvider";
+import Banner from "../components/Banner";
 
-function Game({ qs }) {
-    let sampleQuestions = [
-        { 
-            text: 'During the early stages of the Cold War, which event in 1962 brought the United States and the Soviet Union to the brink of nuclear war, and what were the key factors that led to the confrontation?', 
-            anwsers: [
-                'The Berlin Airlift',
-                'The Cuban Missile Crisis',
-                'The Korean War',
-                'The Space Race'
-            ],
-            correct: 'The Cuban Missile Crisis'
-        },
-    ];
+function Game() {
+    let socket = useSocket();
+    let room = useRoom();
+    let [gameStarted, setGameStarted] = useState(false);
+    let [questions, setQuestions] = useState([]);
+    let [score, setScore] = useState([]);
+    let [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-    const [questions, setQuestions] = useState(sampleQuestions);
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [score, setScore] = useState([]);
+    useEffect(() => {
+        if(!socket) return;
 
+        socket.emit('player_ready', room.data.roomId, localStorage.getItem('player_id'));   // Player id is temporarily stored in local storage
+
+        socket.on('game_starting', (questions, startRoundAt) => {
+            setQuestions(questions);
+
+            let currentTime = Date.now();
+            let startGameAt = startRoundAt - currentTime;
+
+            if(startGameAt <= 0) {
+                setGameStarted(true);
+            } else {
+                setTimeout(() => {
+                    setGameStarted(true);
+                }, startGameAt);
+            }
+
+            console.log("Game starting in " + startGameAt * 1000 + " seconds");
+            console.log("Questions: ", questions);
+        });
+
+        socket.on('player_not_in_room', () => {
+            console.log("Player not in room");
+        });
+
+        return () => {
+            socket.off('game_starting');
+            socket.off('player_not_in_room');
+        }
+    }, [socket]);
+
+    let content = gameStarted ? (<GameCard
+        question={questions[currentQuestionIndex]}
+        onClickHandler={(anwser) => {
+            console.log(anwser);
+        }}
+    />) : <Banner message="Get ready..." />;
 
     return (
         <div className="flex justify-center items-center">
-            <GameCard
-                question={questions[0]}
-                onClickHandler={(anwser) => {
-                    console.log(anwser);
-                }}
-            />
+            {content}
         </div>
     );
 }

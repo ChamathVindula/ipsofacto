@@ -62,14 +62,12 @@ function RoundLobby() {
     useEffect(() => {
         if(!socket) return;
 
-        socket.on('start_round', (round, startRoundAt, questions) => {
-            console.log("Round starting, redirecting to the round...");
-            // room.dispatch({ type: "INIT_ROUND", payload: { round, startRoundAt, questions } });
-            // navigate("/round");
+        socket.on('round_starting', () => {
+            navigate("/play");
         });
 
         return () => {
-            socket.off('start_round');
+            socket.off('round_starting');
         }
     }, []);
 

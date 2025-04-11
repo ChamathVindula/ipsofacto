@@ -20,7 +20,7 @@ function CreateGameForm() {
             alert("Please enter a game name!");
             return;
         }
-        socket.emit("create_room", 1, roomName);    // Player id is hardcoded to 1 for now
+        socket.emit("create_room", localStorage.getItem('player_id'), roomName);    // Player id is temporarily stored in local storage
         
         setRoomName("");
     }

@@ -9,7 +9,6 @@ module.exports = (socket, io) => {
      * @param {number} number_of_rounds 
      */
     const startGame = async (room_id, points_per_question, number_of_rounds) => {
-        const status = 'in_progress';
         const roomData = await getRoom(room_id);
         
         if(!roomData) {
@@ -22,11 +21,12 @@ module.exports = (socket, io) => {
             return;
         }
         const gameData = {
-            status: status,
+            status: 'in_progress',
             points_per_question: points_per_question,
             number_of_rounds: number_of_rounds,
             current_round: 0,
-            rounds: []
+            rounds: [],
+            players_ready: 0
         }
         room.setGame(gameData);
         persistRoom(room); // Save the updated room state to Redis
@@ -35,6 +35,30 @@ module.exports = (socket, io) => {
     
     const endGame = () => {
         //...
+    }
+
+    const playerReady = async (room_id, player_id) => {
+        const roomData = await getRoom(room_id);
+
+        if(!roomData) {
+            socket.emit('room_not_found');
+            return;
+        }
+        const room = hydrateRoom(roomData);
+
+        if(!room.playerExists(player_id)) {
+            socket.emit('player_not_in_room');
+            return;
+        }
+        room.getGame().playerReady();
+
+        persistRoom(room);
+
+        if(room.getGame().allPlayersReady()) {
+            const questions = room.getGame().getQuestionsOfCurrentRound();
+            const startRoundAt = Date.now() + 5000;                 // Start the round five seconds after the round is created
+            socket.emit('game_starting', questions, startRoundAt);  // Start the game for all players
+        }
     }
 
     /**
@@ -49,7 +73,7 @@ module.exports = (socket, io) => {
     const startRound = async (room_id, genre, difficulty, number_of_questions, time_per_question) => {
         const status = 'in_progress';
         const roomData = await getRoom(room_id);
-        
+
         if(!roomData) {
             socket.emit('room_not_found');
             return;
@@ -60,14 +84,11 @@ module.exports = (socket, io) => {
             socket.emit('game_not_in_progress');
             return;
         }
-        room.game().createRound(status, genre, difficulty, number_of_questions, time_per_question);
-
-        persistRoom(room); // Save the updated room state to Redis
-
-        const round = room.game().current_round;
-        const questions = room.game().getQuestionsOfCurrentRound();
-        const startRoundAt = Date.now() + 5000; // Start the round five seconds after the round is created
-        socket.emit('start_round', round, startRoundAt, questions); // Notify all players in the room that the round is starting
+        let roundData = {status, genre, difficulty, number_of_questions, time_per_question}
+        room.getGame().setRound(roundData);
+        room.getGame().resetPlayersReady(); // Reset the players ready count for the new round
+        persistRoom(room);                  // Save the updated room state to Redis
+        socket.emit('round_starting');      // Notify all players the round is starting
     }
 
     /**
@@ -79,7 +100,7 @@ module.exports = (socket, io) => {
      * @param {string} player_id 
      * @param {object} answers 
      */
-    const pushAnwsers = (room_id, player_id, answers) => {
+    const pushAnswers = (room_id, player_id, answers) => {
         const roomData = getRoom(room_id);
 
         if(!roomData) {
@@ -92,7 +113,7 @@ module.exports = (socket, io) => {
             socket.emit('player_not_in_room');
             return;
         }
-        room.game().pushPlayerAnwsers(player_id, answers);  // Push the player's answers to the game state
+        room.game().pushPlayerAnswers(player_id, answers);  // Push the player's answers to the game state
         persistRoom(room);
         
         // Notify all players if the round has ended
@@ -106,5 +127,6 @@ module.exports = (socket, io) => {
     socket.on('start_game', startGame);
     socket.on('end_game', endGame);
     socket.on('start_round', startRound);
-    socket.on('player_finshed_round', pushAnwsers);
+    socket.on('player_finshed_round', pushAnswers);
+    socket.on('player_ready', playerReady);
 }

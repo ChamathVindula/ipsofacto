@@ -4,14 +4,14 @@ class Question {
     /**
      * 
      * @param {string} question 
-     * @param {string} anwser 
+     * @param {string} answer 
      * @param {Array<string>} distractions 
      * @param {object} scores 
      */
-    constructor(question, anwser, distractions, scores = {}) {
+    constructor(question, answer, distractions, scores = {}) {
         this.id = uuidv4();
         this.question = question;
-        this.anwser = anwser;
+        this.answer = answer;
         this.distractions = distractions;
         this.scores = scores;   // {player_id: score}
     }
@@ -20,12 +20,20 @@ class Question {
         return this.id;
     }
 
+    getCompiledQuestion() {
+        return {
+            question: this.question,
+            answer: this.answer,
+            distractions: this.distractions
+        }
+    }
+
     getQuestion() {
         return this.question;
     }
 
     getChoices() {
-        return [...this.distractions, this.anwser].sort(() => Math.random() - 0.5);
+        return [...this.distractions, this.answer].sort(() => Math.random() - 0.5);
     }
 
     getScores() {
@@ -33,7 +41,7 @@ class Question {
     }
 
     getAnswer() {
-        return this.anwser;
+        return this.answer;
     }
 
     setPlayerAnswer(player_id, score) {
@@ -45,10 +53,17 @@ class Question {
     }
 
     serialise() {
+        console.log('Serialising question:', {
+            id: this.id,
+            question: this.question,
+            answer: this.answer,
+            distractions: this.distractions,
+            scores: this.scores
+        });
         return {
             id: this.id,
             question: this.question,
-            anwser: this.anwser,
+            answer: this.answer,
             distractions: this.distractions,
             scores: this.scores
         }

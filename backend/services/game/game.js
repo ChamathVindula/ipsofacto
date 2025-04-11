@@ -9,13 +9,18 @@ class Game {
      * @param {number} current_round 
      * @param {Array<Round>} rounds 
      */
-    constructor(player_count, status, points_per_question, number_of_rounds, current_round = 0, rounds = []) {
+    constructor(player_count, status, points_per_question, number_of_rounds, current_round = 0, rounds = [], players_ready = 0) {
         this.player_count = player_count;
         this.status = status;
         this.points_per_question = points_per_question;
         this.number_of_rounds = number_of_rounds;
         this.current_round = current_round;
         this.rounds = rounds.length ? this.hydrateRounds(rounds) : [];
+        this.players_ready = players_ready;
+    }
+
+    getRounds() {
+        return this.rounds;
     }
 
     getCurrentRoundNumber() {
@@ -38,30 +43,58 @@ class Game {
         return this.rounds[this.current_round-1].getScores();
     }
 
-    createRound(status, genre, difficulty, number_of_questions, time_per_question) {
-        let newRound = new Round(status, genre, difficulty, number_of_questions, time_per_question);
-        
-        newRound.generateQuestions();
-        this.rounds.push(newRound);
-        this.moveToNextRound();
+    setRound(round_data) {
+        try {
+            if(!round_data) {
+                throw new Error('Invalid round data');
+            }
+            let newRound = this.createRound(round_data);
+            newRound.generateQuestions();
+            this.rounds.push(newRound);
+            this.moveToNextRound();
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    createRound(round_data) {
+        return new Round(
+            round_data.status, 
+            round_data.genre, 
+            round_data.difficulty, 
+            round_data.number_of_questions, 
+            round_data.time_per_question,
+            round_data.questions ?? [],
+            round_data.current_question ?? 0,
+        );
     }
 
     hydrateRounds(rounds) {
-        if(!rounds.length) return;
+        if(!rounds.length) return [];
 
-        this.rounds = rounds,map(round => {
-            return new Round(round.status, round.genre, round.difficulty, 
-                            round.number_of_questions, round.time_per_question, 
-                            round.questions, round.current_question);
+        return rounds.map(round => {
+            return this.createRound(round);
         });
     }
 
-    pushPlayerAnwsers(player_id, anwsers) {
-        this.rounds[this.current_round-1].pushPlayerAnswers(player_id, anwsers);
+    resetPlayersReady() {
+        this.players_ready = 0;
+    }
+
+    playerReady() {
+        this.players_ready++;
+    }
+
+    pushPlayerAnswers(player_id, answers) {
+        this.rounds[this.current_round-1].pushPlayerAnswers(player_id, answers);
     }
 
     allPlayersFinishedCurrentRound() {
         return this.rounds[this.current_round-1].playersAnswered() === this.player_count;
+    }
+
+    allPlayersReady() {
+        return this.players_ready === this.player_count;
     }
 
     moveToNextRound() {

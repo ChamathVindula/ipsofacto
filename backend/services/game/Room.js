@@ -29,6 +29,10 @@ class Room {
         return this.players;
     }
 
+    getGame() {
+        return this.game;
+    }
+
     gameInProgress() {
         return this.game && this.game.gameInProgress();
     }
@@ -38,16 +42,27 @@ class Room {
         this.roomCode = room.roomCode;
         this.host = room.host;
         this.players = room.players;
-        this.game = this.setGame(room.game);
+        this.game = this.createGame(room.game);
     }
 
-    setGame(game) {
-        if(!game) return;
+    setGame(game_data) {
+        try {
+            if(!game_data) {
+                throw new Error('Invalid game data');
+            }
+            this.game = this.createGame(game_data);
+        } catch (error) {
+            throw error;
+        }
+    }
 
-        this.game = new Game(
-            game.player_count ?? this.players.length, game.status, 
-            game.points_per_question, game.number_of_rounds, 
-            game.current_round, game.rounds);
+    createGame(game_data) {
+        if(!game_data) return null;
+
+        return new Game(
+            game_data.player_count ?? this.players.length, game_data.status, 
+            game_data.points_per_question, game_data.number_of_rounds, 
+            game_data.current_round, game_data.rounds, game_data.players_ready);
     }
 
     game() {
@@ -71,7 +86,7 @@ class Room {
     }
 
     playerExists(player_id) {
-        return this.players.some(player => player.id === player_id);
+        return this.players.some(playerId => playerId === player_id);
     }
 
     removePlayer(playerId) {
