@@ -53,13 +53,6 @@ class Question {
     }
 
     serialise() {
-        console.log('Serialising question:', {
-            id: this.id,
-            question: this.question,
-            answer: this.answer,
-            distractions: this.distractions,
-            scores: this.scores
-        });
         return {
             id: this.id,
             question: this.question,
