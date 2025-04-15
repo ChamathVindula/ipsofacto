@@ -28,7 +28,7 @@ const router = createBrowserRouter([
                 Component: Game
             },
             {
-                path: "outcome",
+                path: "results",
                 Component: Results
             }
         ]

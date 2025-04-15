@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import GameCard from "../components/GameCard";
+import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketProvider";
 import { useRoom } from "../context/RoomProvider";
+import GameCard from "../components/GameCard";
 import Banner from "../components/Banner";
 import ProgressBar from "../components/progressBar";
 
@@ -14,6 +15,7 @@ function Game() {
     let [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1);
     let [isGameFinished, setIsGameFinished] = useState(true);
     let timerRef = useRef(null);
+    let navigate = useNavigate();
 
 
     let createTimer = (time, callback) => {
@@ -28,9 +30,9 @@ function Game() {
         }
     }
 
-    let onClickHandler = (questionId, answer) => {    
+    let onClickHandler = (question_id, answer) => {    
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-        setAnswers(prevAnswers => { return { ...prevAnswers, [questionId]: answer } });
+        setAnswers(prevAnswers => { return { ...prevAnswers, [question_id]: answer } });
     }
 
     useEffect(() => {
@@ -39,6 +41,7 @@ function Game() {
         socket.emit('player_ready', room.data.roomId, localStorage.getItem('player_id'));   // Player id is temporarily stored in local storage
 
         socket.on('game_starting', (data, startRoundAt) => {
+            console.log('Game starting', data);
             setQuestions(data.questions);
             setTimePerQuestion(data.time_per_question);
 
@@ -48,11 +51,17 @@ function Game() {
                 setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
                 setIsGameFinished(false);
             }, time);
-
-            return () => {
-                socket.off('game_starting');
-            }
         });
+
+        socket.on('round_finished', (round, scores) => {
+            console.log('Round finished', round, scores);
+            // navigate('/results', { state: { round, scores } });
+        });
+        
+        return () => {
+            socket.off('game_starting');
+            socket.off('round_finished');
+        }
     }, [socket]);
 
     useEffect(() => {
@@ -61,6 +70,7 @@ function Game() {
         // If there are no more questions, stop the game
         if(currentQuestionIndex >= questions.length) {
             setIsGameFinished(true);
+            socket.emit('player_finshed_round', room.data.roomId, localStorage.getItem('player_id'), answers);
             return;
         }
 
@@ -76,9 +86,9 @@ function Game() {
         content = <Banner message="Waiting for other players to join..." />;
     } else {
         if(currentQuestionIndex >= questions.length) {
-            content = <Banner message="Game finished!" />;
+            content = <Banner message="Round finished, waiting for other players!" />;
         } else if(currentQuestionIndex === -1) {
-            content = <Banner message="Waiting for the game to start..." />;
+            content = <Banner message="Waiting for the round to start..." />;
         } 
         else {
             content = (

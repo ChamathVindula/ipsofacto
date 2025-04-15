@@ -4,7 +4,7 @@ module.exports.createGenerateQuestionsPrompt = (number_of_questions, genre, diff
             Give the questions in a json array and each question should be an object with the following properties:
             - question: the question text
             - answer: the correct answer
-            - distractions: an array of 3 wrong answers and the correct answer
+            - distractions: an array of 4 options including the correct answer
 
             Adjust the similarity of the distractions to the correct answer based on the difficulty level.
 

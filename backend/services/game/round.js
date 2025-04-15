@@ -31,23 +31,30 @@ class Round {
     getQuestions() {
         if(!this.questions.length) return { };
 
+        let questions = this.questions.map(question => {
+            return question.getCompiledQuestion();
+        });
         return { 
             time_per_question: this.time_per_question,
-            questions: this.questions.map(question => {
-                return question.getCompiledQuestion();
-            })
+            questions: questions,
         };
     }
 
-    getScores() {
+    getPlayerAnswers() {
         return this.questions.reduce((acc, question) => {
-            acc[question.getId()] = question.getScores();
+            acc[question.getId()] = question.getPlayerAnswers();
             return acc;
         }, {});
     }
     
     createQuestion(question_data) {
-        return new Question(question_data.question, question_data.answer, question_data.distractions);
+        return new Question(
+            question_data.id ?? null,
+            question_data.question, 
+            question_data.answer, 
+            question_data.distractions,
+            question_data.player_answers ?? {}
+        );
     }
 
     async generateQuestions() {
@@ -101,14 +108,15 @@ class Round {
 
     pushPlayerAnswers(player_id, answers) {
         this.questions.forEach((question) => {
-            if(answers[question.getId()] !== undefined) {
-                question.setPlayerAnswer(player_id, answers[question.getId()]);
-            }
+            let answer = answers[question.getId()];
+            if(!answer) return;
+            question.setPlayerAnswer(player_id, answer);
         });
+
         this.players_answered++;
     }
 
-    playersAnswered() {
+    playersAnsweredCount() {
         return this.players_answered;
     }
 

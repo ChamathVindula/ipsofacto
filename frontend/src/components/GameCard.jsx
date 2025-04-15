@@ -6,8 +6,8 @@ function GameCard({ question, onClickHandler }) {
     <div className="flex flex-col justify-center items-center p-4 mt-8 mx-16">
       <Question text={question.question} />
       <Anwsers
-        anwsers={[...question.distractions, question.answer]}
-        correct_anwser={question.answer}
+        question_id={question.id}
+        anwsers={[...question.distractions]}
         onClickHandler={onClickHandler}
       />
     </div>

@@ -40,7 +40,19 @@ class Game {
     }
 
     getScoresOfCurrentRound() {
-        return this.rounds[this.current_round-1].getScores();
+        let answers = this.rounds[this.current_round-1].getPlayerAnswers();
+        let scores = {};
+
+        Object.entries(answers).forEach(([question_id, player_answers]) => {
+            Object.entries(player_answers).forEach(([player_id, answer]) => {
+                if(!scores[player_id]) {
+                    scores[player_id] = 0;
+                }
+                scores[player_id] = scores[player_id] + (answer ? this.points_per_question : 0);
+            });
+        });
+
+        return scores;
     }
 
     async setRound(round_data) {
@@ -95,8 +107,8 @@ class Game {
         this.rounds[this.current_round-1].pushPlayerAnswers(player_id, answers);
     }
 
-    allPlayersFinishedCurrentRound() {
-        return this.rounds[this.current_round-1].playersAnswered() === this.player_count;
+    allPlayersFinishedRound() {
+        return this.rounds[this.current_round-1].playersAnsweredCount() === this.player_count;
     }
 
     allPlayersReady() {

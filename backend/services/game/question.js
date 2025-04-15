@@ -6,14 +6,14 @@ class Question {
      * @param {string} question 
      * @param {string} answer 
      * @param {Array<string>} distractions 
-     * @param {object} scores 
+     * @param {object} player_answers 
      */
-    constructor(question, answer, distractions, scores = {}) {
-        this.id = uuidv4();
+    constructor(id, question, answer, distractions, player_answers = {}) {
+        this.id = id ?? uuidv4();               // Id could be null if the question was just created
         this.question = question;
         this.answer = answer;
         this.distractions = distractions;
-        this.scores = scores;   // {player_id: score}
+        this.player_answers = player_answers;   // {player_id: answer}
     }
 
     getId() {
@@ -22,9 +22,10 @@ class Question {
 
     getCompiledQuestion() {
         return {
+            id: this.id,
             question: this.question,
             answer: this.answer,
-            distractions: this.distractions
+            distractions: this.distractions.sort(() => Math.random() - 0.5)
         }
     }
 
@@ -33,23 +34,23 @@ class Question {
     }
 
     getChoices() {
-        return [...this.distractions, this.answer].sort(() => Math.random() - 0.5);
+        return [...this.distractions].sort(() => Math.random() - 0.5);
     }
 
-    getScores() {
-        return this.scores;
+    getPlayerAnswers() {
+        return this.player_answers;
     }
 
     getAnswer() {
         return this.answer;
     }
 
-    setPlayerAnswer(player_id, score) {
-        this.scores[player_id] = score;
+    setPlayerAnswer(player_id, answer) {
+        this.player_answers[player_id] = answer === this.answer;
     }
 
     numberOfPlayersAnswered() {
-        return Object.keys(this.scores).length;
+        return Object.keys(this.player_answers).length;
     }
 
     serialise() {
@@ -58,7 +59,7 @@ class Question {
             question: this.question,
             answer: this.answer,
             distractions: this.distractions,
-            scores: this.scores
+            player_answers: this.player_answers
         }
     }
 }

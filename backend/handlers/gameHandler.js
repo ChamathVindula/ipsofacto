@@ -37,6 +37,14 @@ module.exports = (socket, io) => {
         //...
     }
 
+    /**
+     * Set a player as ready in the game state.
+     * If all players are ready, notify all players in the 
+     * room that the game is about to start.
+     * 
+     * @param {string} room_id 
+     * @param {string} player_id 
+     */
     const playerReady = async (room_id, player_id) => {
         const roomData = await getRoom(room_id);
 
@@ -100,8 +108,8 @@ module.exports = (socket, io) => {
      * @param {string} player_id 
      * @param {object} answers 
      */
-    const pushAnswers = (room_id, player_id, answers) => {
-        const roomData = getRoom(room_id);
+    const pushAnswers = async (room_id, player_id, answers) => {
+        const roomData = await getRoom(room_id);
 
         if(!roomData) {
             socket.emit('room_not_found');
@@ -113,13 +121,13 @@ module.exports = (socket, io) => {
             socket.emit('player_not_in_room');
             return;
         }
-        room.game().pushPlayerAnswers(player_id, answers);  // Push the player's answers to the game state
+        room.getGame().pushPlayerAnswers(player_id, answers);  // Push the player's answers to the game state
         persistRoom(room);
         
         // Notify all players if the round has ended
-        if(room.game().allPlayersFinishedCurrentRound()) {
-            const round = room.game().getCurrentRoundNumber();
-            const scores = room.game().getScoresOfCurrentRound();
+        if(room.getGame().allPlayersFinishedRound()) {
+            const round = room.getGame().getCurrentRoundNumber();
+            const scores = room.getGame().getScoresOfCurrentRound();
             socket.emit('round_finished', round, scores);
         }
     }
@@ -127,6 +135,6 @@ module.exports = (socket, io) => {
     socket.on('start_game', startGame);
     socket.on('end_game', endGame);
     socket.on('start_round', startRound);
-    socket.on('player_finshed_round', pushAnswers);
     socket.on('player_ready', playerReady);
+    socket.on('player_finshed_round', pushAnswers);
 }
