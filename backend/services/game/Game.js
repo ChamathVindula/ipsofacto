@@ -48,7 +48,7 @@ class Game {
                 if(!scores[player_id]) {
                     scores[player_id] = 0;
                 }
-                scores[player_id] = scores[player_id] + (answer ? this.points_per_question : 0);
+                scores[player_id] = parseFloat(scores[player_id]) + (answer ? parseFloat(this.points_per_question) : 0);
             });
         });
 
