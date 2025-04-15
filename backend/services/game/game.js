@@ -43,17 +43,23 @@ class Game {
         return this.rounds[this.current_round-1].getScores();
     }
 
-    setRound(round_data) {
+    async setRound(round_data) {
         try {
             if(!round_data) {
                 throw new Error('Invalid round data');
             }
             let newRound = this.createRound(round_data);
-            newRound.generateQuestions();
+            let questionsGeneratedSuccessfully = await newRound.generateQuestions();
+
+            if(!questionsGeneratedSuccessfully) {
+                throw new Error('Failed to generate questions at the game level');
+            }
             this.rounds.push(newRound);
             this.moveToNextRound();
+            return true;
         } catch (error) {
-            throw error;
+            console.error(error);
+            return false;
         }
     }
 

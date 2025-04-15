@@ -85,7 +85,7 @@ module.exports = (socket, io) => {
             return;
         }
         let roundData = {status, genre, difficulty, number_of_questions, time_per_question}
-        room.getGame().setRound(roundData);
+        await room.getGame().setRound(roundData);
         room.getGame().resetPlayersReady(); // Reset the players ready count for the new round
         persistRoom(room);                  // Save the updated room state to Redis
         socket.emit('round_starting');      // Notify all players the round is starting
