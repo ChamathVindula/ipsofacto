@@ -5,7 +5,7 @@ const Room = require('../services/game/Room');
  * Creates a new game room session.
  * 
  * @param {string} host 
- * @returns 
+ * @returns {Room}
  */
 module.exports.createRoom = (host) => {
     return new Room(host);
