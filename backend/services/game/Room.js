@@ -1,4 +1,4 @@
-const Game = require('./Lame');
+const Game = require('./Game.js');
 const { v4: uuidv4 } = require('uuid');
 
 class Room {

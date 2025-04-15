@@ -1,4 +1,4 @@
-const Question = require('./Luestion.js');
+const Question = require('./Question.js');
 const openai = require('../../config/openai.js');
 const { createGenerateQuestionsPrompt, trimAIResponse }  = require('../../utils/promptGeneratorUtils.js');
 
