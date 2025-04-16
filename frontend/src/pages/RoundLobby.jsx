@@ -53,7 +53,7 @@ function RoundLobby() {
   let onClickHandler = (e) => {
     e.preventDefault();
     setIsLoading(true);
-    socket.emit("start_round", room.data.roomId, selectedGenre.name, selectedDifficulty, numberOfQuestions, timePerQuestion);
+    socket.emit("create_round", room.data.roomId, selectedGenre.name, selectedDifficulty, numberOfQuestions, timePerQuestion);
   };
 
   let settings = {
@@ -65,12 +65,12 @@ function RoundLobby() {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("round_starting", () => {
+    socket.on("round_created", () => {
       navigate("/play");
     });
 
     return () => {
-      socket.off("round_starting");
+      socket.off("round_created");
     };
   }, []);
 

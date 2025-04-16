@@ -30,7 +30,7 @@ module.exports = (socket, io) => {
         }
         room.setGame(gameData);
         persistRoom(room); // Save the updated room state to Redis
-        socket.emit('game_starting', room.serialise()); // Notify all players in the room that the game is starting
+        io.to(room.getRoomId()).emit('game_starting', room.serialise()); // Notify all players in the room that the game is starting
     }
     
     const endGame = () => {
@@ -49,13 +49,13 @@ module.exports = (socket, io) => {
         const roomData = await getRoom(room_id);
 
         if(!roomData) {
-            socket.emit('room_not_found');
+            socket.emit('room_not_found');      // Notify the player that the room was not found
             return;
         }
         const room = hydrateRoom(roomData);
 
         if(!room.playerExists(player_id)) {
-            socket.emit('player_not_in_room');
+            socket.emit('player_not_in_room');  // Notify the player that they are not in the room
             return;
         }
         room.getGame().playerReady();
@@ -64,8 +64,11 @@ module.exports = (socket, io) => {
 
         if(room.getGame().allPlayersReady()) {
             const questions = room.getGame().getQuestionsOfCurrentRound();
-            const startRoundAt = Date.now() + 5000;                 // Start the round five seconds after the round is created
-            socket.emit('round_starting', questions, startRoundAt);  // Start the game for all players
+            // Start the round five seconds after the round is created
+            // This ensures that all players start the round at the same time
+            const startRoundAt = Date.now() + 5000;
+            // Notify all players that the round is starting
+            io.to(room.getRoomId()).emit('round_starting', questions, startRoundAt);
         }
     }
 
@@ -78,7 +81,7 @@ module.exports = (socket, io) => {
      * @param {number} number_of_questions 
      * @param {number} time_per_question 
      */
-    const startRound = async (room_id, genre, difficulty, number_of_questions, time_per_question) => {
+    const createRound = async (room_id, genre, difficulty, number_of_questions, time_per_question) => {
         const status = 'in_progress';
         const roomData = await getRoom(room_id);
 
@@ -94,9 +97,9 @@ module.exports = (socket, io) => {
         }
         let roundData = {status, genre, difficulty, number_of_questions, time_per_question}
         await room.getGame().setRound(roundData);
-        room.getGame().resetPlayersReady(); // Reset the players ready count for the new round
-        persistRoom(room);                  // Save the updated room state to Redis
-        socket.emit('round_starting');      // Notify all players the round is starting
+        room.getGame().resetPlayersReady();             // Reset the players ready count for the new round
+        persistRoom(room);                              // Save the updated room state to Redis
+        io.to(room.getRoomId()).emit('round_created');  // Notify all players the round is starting
     }
 
     /**
@@ -128,13 +131,13 @@ module.exports = (socket, io) => {
         if(room.getGame().allPlayersFinishedRound()) {
             const round = room.getGame().getCurrentRoundNumber();
             const scores = room.getGame().getScoresOfCurrentRound();
-            socket.emit('round_finished', round, scores);
+            io.to(room.getRoomId()).emit('round_finished', round, scores); // Notify all players that the round is finished
         }
     }
 
     socket.on('start_game', startGame);
     socket.on('end_game', endGame);
-    socket.on('start_round', startRound);
+    socket.on('create_round', createRound);
     socket.on('player_ready', playerReady);
     socket.on('player_finshed_round', pushAnswers);
 }

@@ -59,7 +59,7 @@ function Game() {
         });
 
         return () => {
-            socket.off("game_starting");
+            socket.off("round_starting");
             socket.off("round_finished");
         };
     }, [socket]);
