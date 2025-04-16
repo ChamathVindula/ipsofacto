@@ -13,7 +13,7 @@ function CreateGameForm() {
         setRoomName(e.target.value);
     }
 
-    const onSubmitHandler = (e) => {
+    const onClickHandler = (e) => {
         e.preventDefault();
         
         if (roomName.trim() === "") {
@@ -40,14 +40,15 @@ function CreateGameForm() {
             <label htmlFor="gameName" className="text-sm font-medium text-gray-700">Game Name</label>
             <input 
                 type="text" 
-                id="gameName" 
+                id="gameName"
+                value={roomName}
                 className="mt-1 p-2 border border-gray-300 rounded-md" 
                 placeholder="Enter game name"
                 onChange={onChangeHandle}
             />
             <button 
                 className="mt-4 bg-mossgreen-dark text-white font-bold py-2 px-4 rounded-sm hover:bg-mossgreen-dark cursor-pointer transition duration-300"
-                onClick={onSubmitHandler}
+                onClick={onClickHandler}
             >
                 Create
             </button>
