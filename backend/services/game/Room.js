@@ -25,6 +25,10 @@ class Room {
         return this.roomCode;
     }
 
+    getHost() {
+        return this.host;
+    }
+
     getPlayers() {
         return this.players;
     }
@@ -79,7 +83,7 @@ class Room {
     }
 
     addPlayer(player) {
-        if(NaN(player)) {
+        if(isNaN(player)) {
             throw new Error('Invalid player ID');
         }
         this.players.push(player);

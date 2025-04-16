@@ -52,6 +52,16 @@ function RoomProvider({ children }) {
                     })
                 };
             }
+            case "ADD_PLAYER": {
+                return {
+                    ...state,
+                    players: [...state.players, { 
+                        id: action.payload,
+                        name: generateRandomName(), 
+                        avatar: "/public/user.png" 
+                    }]
+                };
+            }
             case "SET_GAME": {
                 return {
                     ...state,

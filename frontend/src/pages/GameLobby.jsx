@@ -19,8 +19,13 @@ function GameLobby() {
             navigate("/round");
         });
 
+        socket.on('player_joined', (player) => {
+            room.dispatch({ type: 'ADD_PLAYER', payload: player });
+        });
+
         return () => {
             socket.off('game_starting');
+            socket.off('player_joined');
         }
     }, []);
 

@@ -95,11 +95,17 @@ module.exports = (socket, io) => {
             socket.emit('game_not_in_progress');
             return;
         }
-        let roundData = {status, genre, difficulty, number_of_questions, time_per_question}
-        await room.getGame().setRound(roundData);
+        let roundData = {
+            status, 
+            genre, 
+            difficulty, 
+            number_of_questions, 
+            time_per_question
+        }
+        await room.getGame().setRound(roundData);       // Create a new round in the game state
         room.getGame().resetPlayersReady();             // Reset the players ready count for the new round
-        persistRoom(room);                              // Save the updated room state to Redis
-        io.to(room.getRoomId()).emit('round_created');  // Notify all players the round is starting
+        persistRoom(room);                              // Save the updated room state to redis
+        io.to(room.getRoomId()).emit('round_created');  // Notify all players the round has been created
     }
 
     /**

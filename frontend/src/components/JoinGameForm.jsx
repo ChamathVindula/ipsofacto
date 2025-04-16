@@ -32,6 +32,15 @@ function JoinGameForm() {
             room.dispatch({ type: "INIT", payload: roomData });
             navigate("/game");
         });
+
+        socket.on('player_in_room', () => {
+            alert("You are already in the room!");
+        });
+
+        return () => {
+            socket.off("room_joined");
+            socket.off('player_in_room');
+        }
     }, [socket]);
 
     return (
