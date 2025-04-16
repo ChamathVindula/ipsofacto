@@ -18,7 +18,7 @@ function GameSetup() {
 
     const formSubmitHandler = (event) => {
         event.preventDefault();
-        socket.emit('start_game', room.data.roomId, pointsPerQuestion, roundCount);
+        socket.emit('create_game', room.data.roomId, pointsPerQuestion, roundCount);
     }
 
     return (

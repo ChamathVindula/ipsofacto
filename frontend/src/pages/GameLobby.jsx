@@ -14,8 +14,7 @@ function GameLobby() {
     useEffect(() => {
         if(!socket) return;
 
-        socket.on('game_starting', (room) => {
-            console.log("Game starting, redirecting to the round lobby...");
+        socket.on('game_created', (room) => {
             navigate("/round");
         });
 
@@ -24,7 +23,7 @@ function GameLobby() {
         });
 
         return () => {
-            socket.off('game_starting');
+            socket.off('game_created');
             socket.off('player_joined');
         }
     }, []);

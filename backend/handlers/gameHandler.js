@@ -8,7 +8,7 @@ module.exports = (socket, io) => {
      * @param {number} points_per_question 
      * @param {number} number_of_rounds 
      */
-    const startGame = async (room_id, points_per_question, number_of_rounds) => {
+    const createGame = async (room_id, points_per_question, number_of_rounds) => {
         const roomData = await getRoom(room_id);
         
         if(!roomData) {
@@ -30,7 +30,7 @@ module.exports = (socket, io) => {
         }
         room.setGame(gameData);
         persistRoom(room); // Save the updated room state to Redis
-        io.to(room.getRoomId()).emit('game_starting', room.serialise()); // Notify all players in the room that the game is starting
+        io.to(room.getRoomId()).emit('game_created', room.serialise()); // Notify all players in the room that the game is starting
     }
     
     const endGame = () => {
@@ -141,7 +141,7 @@ module.exports = (socket, io) => {
         }
     }
 
-    socket.on('start_game', startGame);
+    socket.on('create_game', createGame);
     socket.on('end_game', endGame);
     socket.on('create_round', createRound);
     socket.on('player_ready', playerReady);
