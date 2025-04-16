@@ -69,21 +69,21 @@ module.exports = (socket, io) => {
 
         while (!success) {
             try {
-                await redisClient.watch(roomId);
-
+                await redisClient.watch(roomId); // Watch the room key for changes
                 const roomData = await getRoom(room_id);
 
                 if (!roomData) {
                     socket.emit("room_not_found"); // Notify the player that the room was not found
                     success = true;
+                    continue;
                 }
                 const room = hydrateRoom(roomData);
 
                 if (!room.playerExists(player_id)) {
                     socket.emit("player_not_in_room"); // Notify the player that they are not in the room
                     success = true;
+                    continue;
                 }
-
                 room.getGame().playerReady();
 
                 if (room.getGame().allPlayersReady()) {
