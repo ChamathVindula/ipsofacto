@@ -23,6 +23,11 @@ module.exports.hydrateRoom = (room_data) => {
     return room;
 };
 
+module.exports.generateRoomId = (room_id) => {
+    const ROOM_PREFIX = process.env.REDIS_ROOM_PREFIX || "ipsft_game_room:";
+    return `${ROOM_PREFIX}${room_id}`;
+}
+
 /**
  * Persist the game room state to Redis.
  *
@@ -30,10 +35,26 @@ module.exports.hydrateRoom = (room_data) => {
  * @returns {boolean}
  */
 module.exports.persistRoom = (room) => {
-    const ROOM_PREFIX = process.env.REDIS_ROOM_PREFIX || "ipsft_game_room:";
-    const key = `${ROOM_PREFIX}${room.getRoomId()}`;
+    let key = this.generateRoomId(room.getRoomId());
     redisClient.set(key, JSON.stringify(room.serialise()));
 };
+
+/**
+ * Persist the game room state to Redis in a transaction.
+ * 
+ * @param {Room} room 
+ * @returns {*}
+ */
+module.exports.persistRoomByTransaction = async (room) => {
+    if(!(room instanceof Room)) {
+        throw new Error("Expected room to be an instance of Room");
+    }
+    const key = this.generateRoomId(room.getRoomId());
+    const transaction = redisClient.multi();
+    transaction.set(key, JSON.stringify(room.serialise()));
+    let result = await transaction.exec();
+    return result;
+}
 
 /**
  * Retrieve the game room state from Redis.
@@ -42,9 +63,7 @@ module.exports.persistRoom = (room) => {
  * @returns {Room|null}
  */
 module.exports.getRoom = (roomId) => {
-    const ROOM_PREFIX = process.env.REDIS_ROOM_PREFIX || "ipsft_game_room:";
-
-    const key = `${ROOM_PREFIX}${roomId}`;
+    const key = this.generateRoomId(roomId);
 
     return new Promise((resolve, reject) => {
         redisClient.get(key, (err, data) => {

@@ -64,9 +64,14 @@ class Room {
         if(!game_data) return null;
 
         return new Game(
-            game_data.player_count ?? this.players.length, game_data.status, 
-            game_data.points_per_question, game_data.number_of_rounds, 
-            game_data.current_round, game_data.rounds, game_data.players_ready);
+            game_data.player_count ?? this.players.length, 
+            game_data.status, 
+            game_data.points_per_question, 
+            game_data.number_of_rounds, 
+            game_data.current_round, 
+            game_data.rounds, 
+            game_data.players_ready
+        );
     }
 
     game() {

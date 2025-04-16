@@ -127,7 +127,8 @@ class Game {
             points_per_question: this.points_per_question,
             number_of_rounds: this.number_of_rounds,
             current_round: this.current_round,
-            rounds: this.rounds.map(round => round.serialise())
+            rounds: this.rounds.map(round => round.serialise()),
+            players_ready: this.players_ready
         }
     }
 }

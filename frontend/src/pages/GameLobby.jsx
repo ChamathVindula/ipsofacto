@@ -14,8 +14,8 @@ function GameLobby() {
     useEffect(() => {
         if(!socket) return;
 
-        socket.on('game_created', (room) => {
-            navigate("/round");
+        socket.on('game_created', (data) => {
+            navigate("/round", { state: { host: data.host } });
         });
 
         socket.on('player_joined', (player) => {
