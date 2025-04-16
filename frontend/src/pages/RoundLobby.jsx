@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Order from "../components/Order";
 import GenreSelector from "../components/GenreSelector";
 import QuestionCountSelector from "../components/QuestionCountSelector";
@@ -31,6 +31,8 @@ function RoundLobby() {
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
   const [numberOfQuestions, setNumberOfQuestions] = useState(1); // Default to 1 question
   const [timePerQuestion, setTimePerQuestion] = useState(5000); // Default to 5 seconds
+  const [isLoading, setIsLoading] = useState(false);
+  const submitBtnRef = useRef(null);
 
   let genreSelectHandler = (genre) => {
     setSelectedGenre(genre);
@@ -49,15 +51,9 @@ function RoundLobby() {
   };
 
   let onClickHandler = (e) => {
-    let roomId = room.data.roomId;
-    socket.emit(
-      "start_round",
-      roomId,
-      selectedGenre.name,
-      selectedDifficulty,
-      numberOfQuestions,
-      timePerQuestion
-    );
+    e.preventDefault();
+    setIsLoading(true);
+    socket.emit("start_round", room.data.roomId, selectedGenre.name, selectedDifficulty, numberOfQuestions, timePerQuestion);
   };
 
   let settings = {
@@ -101,13 +97,19 @@ function RoundLobby() {
       />
       <div className="flex flex-col justify-center items-center mt-4">
         <button
-          className="border-1 border-mossgreen-dark text-mossgreen-dark 
-                            font-bold py-2 px-4 rounded-sm hover:bg-mossgreen-dark 
-                            transition duration-300 cursor-pointer w-full
-                            hover:text-white hover:border-mossgreen-dark"
+          className="min-w-[128px] justify-center items-center border-1 border-mossgreen-light 
+                            text-white bg-mossgreen-light font-bold py-2 px-4 rounded-sm 
+                            hover:bg-mossgreen-dark hover:border-mossgreen-dark active:scale-95 
+                            transition duration-300 cursor-pointer w-full hover:text-white 
+                            hover:border-mossgreen-dark flex"
           onClick={onClickHandler}
+          ref={submitBtnRef}
         >
-          Start Round
+          {isLoading ? (
+            <div className="w-6 h-6 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+          ) : (
+            "Start Round"
+          )}
         </button>
       </div>
       {/* <Banner message="Get ready its about to get silly &#128515;" /> */}
