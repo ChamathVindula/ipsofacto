@@ -65,7 +65,7 @@ module.exports = (socket, io) => {
         if(room.getGame().allPlayersReady()) {
             const questions = room.getGame().getQuestionsOfCurrentRound();
             const startRoundAt = Date.now() + 5000;                 // Start the round five seconds after the round is created
-            socket.emit('game_starting', questions, startRoundAt);  // Start the game for all players
+            socket.emit('round_starting', questions, startRoundAt);  // Start the game for all players
         }
     }
 

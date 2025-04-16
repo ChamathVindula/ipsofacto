@@ -41,7 +41,7 @@ function Game() {
 
         socket.emit("player_ready", room.data.roomId, localStorage.getItem("player_id")); // Player id is temporarily stored in local storage
 
-        socket.on("game_starting", (data, startRoundAt) => {
+        socket.on("round_starting", (data, startRoundAt) => {
             setQuestions(data.questions);
             setTimePerQuestion(data.time_per_question);
 
