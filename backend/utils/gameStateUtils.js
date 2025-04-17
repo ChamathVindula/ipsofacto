@@ -1,4 +1,4 @@
-const redisClient = require("../config/redisClient.js");
+const { redis } = require("../config/redisClient.js");
 const Room = require("../services/game/Room");
 
 /**
@@ -36,25 +36,8 @@ module.exports.generateRoomId = (room_id) => {
  */
 module.exports.persistRoom = (room) => {
     let key = this.generateRoomId(room.getRoomId());
-    redisClient.set(key, JSON.stringify(room.serialise()));
+    redis.set(key, JSON.stringify(room.serialise()));
 };
-
-/**
- * Persist the game room state to Redis in a transaction.
- * 
- * @param {Room} room 
- * @returns {*}
- */
-module.exports.persistRoomByTransaction = async (room) => {
-    if(!(room instanceof Room)) {
-        throw new Error("Expected room to be an instance of Room");
-    }
-    const key = this.generateRoomId(room.getRoomId());
-    const transaction = redisClient.multi();
-    transaction.set(key, JSON.stringify(room.serialise()));
-    let result = await transaction.exec();
-    return result;
-}
 
 /**
  * Retrieve the game room state from Redis.
@@ -66,7 +49,7 @@ module.exports.getRoom = (roomId) => {
     const key = this.generateRoomId(roomId);
 
     return new Promise((resolve, reject) => {
-        redisClient.get(key, (err, data) => {
+        redis.get(key, (err, data) => {
             if (err) return reject(err);
             if (!data) return resolve(null);
 
@@ -88,13 +71,13 @@ module.exports.setRoomIdToCode = (roomCode, roomId) => {
     }
     const KEY = process.env.REDIS_ROOM_CODES_COLLECTION || "ipsft_game_room_codes";
 
-    redisClient.get(KEY, (err, data) => {
+    redis.get(KEY, (err, data) => {
         if(err) {
             throw err;
         }
         data = !data ? {} : JSON.parse(data);
         data[roomCode] = roomId;
-        redisClient.set(KEY, JSON.stringify(data));
+        redis.set(KEY, JSON.stringify(data));
     });
 };
 
@@ -105,7 +88,7 @@ module.exports.getRoomIdFromCode = (roomCode) => {
     const KEY = process.env.REDIS_ROOM_CODES_COLLECTION || "ipsft_game_room_codes";
 
     return new Promise((resolve, reject) => {
-        redisClient.get(KEY, (err, data) => {
+        redis.get(KEY, (err, data) => {
             if(err) return reject(err);
             if(!data) return resolve(null);
 

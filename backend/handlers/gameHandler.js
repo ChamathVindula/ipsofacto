@@ -2,11 +2,10 @@ const {
     getRoom,
     hydrateRoom,
     persistRoom,
-    persistRoomByTransaction,
     generateRoomId,
 } = require("../utils/gameStateUtils");
 
-const redisClient = require("../config/redisClient");
+const { acquireLock } = require("../config/redisClient");
 
 module.exports = (socket, io) => {
     /**
@@ -64,25 +63,24 @@ module.exports = (socket, io) => {
      * @param {string} player_id
      */
     const playerReady = async (room_id, player_id) => {
-        let roomId = generateRoomId(room_id);
-        let success = false;
+        const roomId = generateRoomId(room_id);
+        
+        let setPlayerReady = async () => {
+            let unlock = await acquireLock(roomId);
 
-        while (!success) {
-            try {
-                await redisClient.watch(roomId); // Watch the room key for changes
+            if(typeof unlock === "function") {
+                console.error("Managed to acquire lock for player: ", player_id);
                 const roomData = await getRoom(room_id);
 
                 if (!roomData) {
                     socket.emit("room_not_found"); // Notify the player that the room was not found
-                    success = true;
-                    continue;
+                    return;
                 }
                 const room = hydrateRoom(roomData);
 
                 if (!room.playerExists(player_id)) {
                     socket.emit("player_not_in_room"); // Notify the player that they are not in the room
-                    success = true;
-                    continue;
+                    return;
                 }
                 room.getGame().playerReady();
 
@@ -98,20 +96,14 @@ module.exports = (socket, io) => {
                         startRoundAt
                     );
                 }
-                let result = await persistRoomByTransaction(room);
-
-                if (result === null) {
-                    // The key was modified by another process
-                    continue;
-                }
-                success = true;
-            } catch (error) {
-                console.error("Error in playerReady: ", error);
-                success = true;
-            } finally {
-                await redisClient.unwatch();
+                persistRoom(room);
+                unlock();
+            } else {
+                console.log("Failed to acquire lock for player: ", player_id);
+                setTimeout(() => { setPlayerReady() }, 200); // 200 ms delay before retrying
             }
         }
+        setPlayerReady();
     };
 
     /**
