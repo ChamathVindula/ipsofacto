@@ -103,6 +103,7 @@ module.exports = (socket, io) => {
                 setTimeout(() => { setPlayerReady() }, 200); // 200 ms delay before retrying
             }
         }
+        
         setPlayerReady();
     };
 
@@ -158,27 +159,41 @@ module.exports = (socket, io) => {
      * @param {object} answers
      */
     const pushAnswers = async (room_id, player_id, answers) => {
-        const roomData = await getRoom(room_id);
+        let roomId = generateRoomId(room_id);
+        
+        let pushPlayerAnswers = async () => {
+            let unlock = await acquireLock(roomId);
+            
+            if(typeof unlock === "function") {
+                console.error("Managed to acquire lock for player (push): ", player_id);
+                const roomData = await getRoom(room_id);
 
-        if (!roomData) {
-            socket.emit("room_not_found");
-            return;
-        }
-        const room = hydrateRoom(roomData);
+                if (!roomData) {
+                    socket.emit("room_not_found");
+                    return;
+                }
+                const room = hydrateRoom(roomData);
 
-        if (!room.playerExists(player_id)) {
-            socket.emit("player_not_in_room");
-            return;
+                if (!room.playerExists(player_id)) {
+                    socket.emit("player_not_in_room");
+                    return;
+                }
+                room.getGame().pushPlayerAnswers(player_id, answers); // Push the player's answers to the game state
+                // Notify all players if the round has ended
+                if (room.getGame().allPlayersFinishedRound()) {
+                    const round = room.getGame().getCurrentRoundNumber();
+                    const scores = room.getGame().getScoresOfCurrentRound();
+                    io.to(room.getRoomId()).emit("round_finished", round, scores); // Notify all players that the round is finished
+                }
+                persistRoom(room);
+                unlock();
+            } else {
+                console.error("Failed to acquire lock for player (push): ", player_id);
+                setTimeout(() => { pushPlayerAnswers() }, 200); // 200 ms delay before retrying
+            }
         }
-        room.getGame().pushPlayerAnswers(player_id, answers); // Push the player's answers to the game state
-        persistRoom(room);
 
-        // Notify all players if the round has ended
-        if (room.getGame().allPlayersFinishedRound()) {
-            const round = room.getGame().getCurrentRoundNumber();
-            const scores = room.getGame().getScoresOfCurrentRound();
-            io.to(room.getRoomId()).emit("round_finished", round, scores); // Notify all players that the round is finished
-        }
+        pushPlayerAnswers();
     };
 
     socket.on("create_game", createGame);

@@ -11,9 +11,10 @@ class Round {
      * @param {number} number_of_questions 
      * @param {number} time_per_question 
      * @param {Array<Question>} questions 
-     * @param {number} current_question 
+     * @param {number} current_question
+     * @param {number} players_answered
      */
-    constructor(status, genre, difficulty, number_of_questions, time_per_question, questions = [], current_question = 0) {
+    constructor(status, genre, difficulty, number_of_questions, time_per_question, questions = [], current_question = 0, players_answered = 0) {
         this.status = status;
         this.genre = genre;
         this.difficulty = difficulty;
@@ -21,7 +22,7 @@ class Round {
         this.time_per_question = time_per_question;
         this.questions = questions.length ? this.hydrateQuestions(questions) : [];
         this.current_question = current_question;
-        this.players_answered = 0;
+        this.players_answered = players_answered;
     }
 
     complete() {
@@ -132,7 +133,8 @@ class Round {
             number_of_questions: this.number_of_questions,
             time_per_question: this.time_per_question,
             questions: this.questions.map(question => question.serialise()),
-            current_question: this.current_question
+            current_question: this.current_question,
+            players_answered: this.players_answered,
         }
     }
 }

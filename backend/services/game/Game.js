@@ -84,6 +84,7 @@ class Game {
             round_data.time_per_question,
             round_data.questions ?? [],
             round_data.current_question ?? 0,
+            round_data.players_answered ?? 0,
         );
     }
 
@@ -108,6 +109,7 @@ class Game {
     }
 
     allPlayersFinishedRound() {
+        console.log('Players answered count: ', this.rounds[this.current_round-1].playersAnsweredCount());
         return this.rounds[this.current_round-1].playersAnsweredCount() === this.player_count;
     }
 

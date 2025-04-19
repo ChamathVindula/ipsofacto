@@ -14,7 +14,7 @@ const warlock = new Warlock(redis);
  */
 module.exports.acquireLock = (key, ttl=5000) => {
     return new Promise((resolve, reject) => {
-        warlock.lock(roomId, ttl, (err, unlock) => {
+        warlock.lock(key, ttl, (err, unlock) => {
             if (err) {
                 reject(`Error acquiring lock: ${err}`);
             } else {
