@@ -122,6 +122,10 @@ class Game {
         
         this.current_round++;
     }
+
+    isLastRound() {
+        return this.current_round >= this.number_of_rounds;
+    }
     
     serialise() {
         return {

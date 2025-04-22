@@ -183,7 +183,10 @@ module.exports = (socket, io) => {
                 if (room.getGame().allPlayersFinishedRound()) {
                     const round = room.getGame().getCurrentRoundNumber();
                     const scores = room.getGame().getScoresOfCurrentRound();
-                    io.to(room.getRoomId()).emit("round_finished", round, scores); // Notify all players that the round is finished
+                    const isLastRound = room.getGame().isLastRound();
+                    const players = room.getPlayers();
+                    const hostNextRound = isLastRound ? null : players[Math.floor(Math.random() * players.length)];
+                    io.to(room.getRoomId()).emit("round_finished", round, scores, hostNextRound); // Notify all players that the round is finished
                 }
                 persistRoom(room);
                 unlock();
