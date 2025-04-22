@@ -53,9 +53,9 @@ function Game() {
             }, time);
         });
 
-        socket.on("round_finished", (round, scores) => {
+        socket.on("round_finished", (round, scores, hostNextRound) => {
             console.log("Round finished", round, scores);
-            // navigate('/results', { state: { round, scores } });
+            navigate('/results', { state: { round, scores, hostNextRound } });
         });
 
         return () => {
