@@ -1,38 +1,52 @@
-import { createBrowserRouter } from 'react-router';
-import Layout from '../components/Layout';
-import HomePage from '../pages/HomePage';
-import GameLobby from '../pages/GameLobby';
-import RoundLobby from '../pages/RoundLobby';
-import Game from '../pages/Game';
-import Results from '../pages/Results';
+import { createBrowserRouter } from "react-router";
+import Layout from "../components/Layout";
+import HomePage from "../pages/HomePage";
+import GameLobby from "../pages/GameLobby";
+import RoundLobby from "../pages/RoundLobby";
+import Game from "../pages/Game";
+import Results from "../pages/Results";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import protect from "./protect";
 
-const router = createBrowserRouter([
+const routes = [
     {
-        path: "/",
+        path: "/",  // Base path for the application
         Component: Layout,
         children: [
             {
+                path: "/login",
+                Component: Login,
+            },
+            {
+                path: "/register",
+                Component: Register,
+            },
+            {
+                index: true,
                 path: "home",
-                Component: HomePage
+                Component: protect(HomePage),
             },
             {
                 path: "game",
-                Component: GameLobby
+                Component: protect(GameLobby),
             },
             {
                 path: "round",
-                Component: RoundLobby
+                Component: protect(RoundLobby),
             },
             {
                 path: "play",
-                Component: Game
+                Component: protect(Game),
             },
             {
                 path: "results",
-                Component: Results
-            }
-        ]
-    }
-]);
+                Component: protect(Results),
+            },
+        ],
+    },
+];
+
+const router = createBrowserRouter(routes);
 
 export default router;
