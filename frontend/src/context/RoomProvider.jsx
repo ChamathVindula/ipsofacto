@@ -15,24 +15,6 @@ function RoomProvider({ children }) {
         players: []
     }
 
-    // function to generate a random player name
-    const generateRandomName = () => {
-        const players = [
-            "Alex Johnson",
-            "Jordan Smith",
-            "Taylor Brooks",
-            "Morgan Davis",
-            "Casey Lee",
-            "Riley Thompson",
-            "Jamie Carter",
-            "Drew Morgan",
-            "Quinn Parker",
-            "Cameron Blake"
-        ];
-
-        return players[Math.floor(Math.random() * players.length)];
-    }
-
     let reducer = (state, action) => {
         switch(action.type) {
             case "INIT": {
@@ -45,19 +27,20 @@ function RoomProvider({ children }) {
                     isHost: action.payload.isHost,
                     players: action.payload.players.map(player => {
                         return { 
-                            id: player,
-                            name: generateRandomName(), 
+                            id: player.id,
+                            name: player.first_name + " " + player.last_name, 
                             avatar: "/public/user.png" 
                         } 
                     })
                 };
             }
             case "ADD_PLAYER": {
+                let player = action.payload;
                 return {
                     ...state,
                     players: [...state.players, { 
-                        id: action.payload,
-                        name: generateRandomName(), 
+                        id: player.id,
+                        name: player.first_name + " " + player.last_name, 
                         avatar: "/public/user.png" 
                     }]
                 };

@@ -4,7 +4,7 @@ function PlayerAvatar({ player }) {
             <div className="w-12 h-12 rounded-full overflow-hidden shadow-sm mx-auto">
                 <img src={player.avatar ?? "/public/user.png"} alt="Avatar" className="w-full h-full object-cover" />
             </div>
-            <div><p className="text-xs lexend-medium">{player.name ?? "Player Name"}</p></div>
+            <div><p className="text-center text-xs lexend-medium">{player.name ?? "Player Name"}</p></div>
         </div>
     );
 }

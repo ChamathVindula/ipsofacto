@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useSocket } from "../context/SocketProvider";
 import { useRoom } from "../context/RoomProvider";
 import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthProvider";
 
 function JoinGameForm() {
     const [roomCode, setRoomCode] = useState("");
     const socket = useSocket();
     const room = useRoom();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const onChangeHandle = (e) => {
         setRoomCode(e.target.value);
@@ -20,7 +22,7 @@ function JoinGameForm() {
             alert("Please enter a game code!");
             return;
         }
-        socket.emit("join_room", localStorage.getItem('player_id'), roomCode);    // Player id is temporarily stored in local storage
+        socket.emit("join_room", user.id, roomCode);
 
         setRoomCode("");
     };

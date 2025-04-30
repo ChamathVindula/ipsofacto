@@ -5,6 +5,7 @@ import { useRoom } from "../context/RoomProvider";
 import GameCard from "../components/GameCard";
 import Banner from "../components/Banner";
 import ProgressBar from "../components/progressBar";
+import { useAuth } from "../context/AuthProvider";
 
 function Game() {
     let socket = useSocket();
@@ -16,6 +17,7 @@ function Game() {
     let [isGameFinished, setIsGameFinished] = useState(true);
     let timerRef = useRef(null);
     let navigate = useNavigate();
+    let { user } = useAuth();
 
     let createTimer = (time, callback) => {
         if (!time || typeof callback !== "function") return;
@@ -39,7 +41,7 @@ function Game() {
     useEffect(() => {
         if (!socket) return;
 
-        socket.emit("player_ready", room.data.roomId, localStorage.getItem("player_id")); // Player id is temporarily stored in local storage
+        socket.emit("player_ready", room.data.roomId, user.id);
 
         socket.on("round_starting", (data, startRoundAt) => {
             setQuestions(data.questions);
@@ -70,7 +72,7 @@ function Game() {
         // If there are no more questions, stop the game
         if (currentQuestionIndex >= questions.length) {
             setIsGameFinished(true);
-            socket.emit("player_finshed_round", room.data.roomId, localStorage.getItem("player_id"), answers);
+            socket.emit("player_finshed_round", room.data.roomId, user.id, answers);
             return;
         }
 

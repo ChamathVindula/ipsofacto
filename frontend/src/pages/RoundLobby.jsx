@@ -8,14 +8,16 @@ import Banner from "../components/Banner";
 import { useSocket } from "../context/SocketProvider";
 import { useRoom } from "../context/RoomProvider";
 import { useNavigate, useLocation } from "react-router";
+import { useAuth } from "../context/AuthProvider";
 
 function RoundLobby() {
   const socket = useSocket();
   const room = useRoom();
   const navigate = useNavigate();
   const { state } = useLocation();
+  const { user } = useAuth();
   const roundHost = state.host || null;
-  const [isHost, setIsHost] = useState(roundHost.toString() === localStorage.getItem("player_id"));
+  const [isHost, setIsHost] = useState(roundHost.toString() === user.id.toString());
   
   const [genre, setGenre] = useState([
     { id: 1, name: "Science", color: "#FF5733" },

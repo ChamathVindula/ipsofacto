@@ -6,6 +6,7 @@ const {
     setRoomIdToCode, 
     getRoomIdFromCode 
 } = require('../utils/gameStateUtils');
+const { fetchUsersById: fetchUsers, fetchUserById: fetchUser } = require('../utils/user');
 
 module.exports = (socket, io) => {
     /**
@@ -13,7 +14,7 @@ module.exports = (socket, io) => {
      * 
      * @param {string} player_id 
      */
-    const createRoom = (player_id, room_name) => {
+    const createRoom = async (player_id, room_name) => {
         const newRoom = makeRoom(player_id);    // Create a new game room session
         const roomId = newRoom.getRoomId();
         const roomCode = newRoom.getRoomCode();
@@ -28,7 +29,7 @@ module.exports = (socket, io) => {
             roomCode: roomCode,
             host: player_id,
             isHost: true,
-            players: newRoom.getPlayers()
+            players:  await fetchUsers(newRoom.getPlayers())
         });
     }
 
@@ -60,7 +61,7 @@ module.exports = (socket, io) => {
         room.addPlayer(player_id);                                              // Add the player to game state
         socket.join(room.getRoomId());                                          // Add the player to the socket room
         persistRoom(room);                                                      // Save the updated room state to redis
-        socket.to(room.getRoomId()).emit('player_joined', player_id);           // Emit the new player to the room
+        socket.to(room.getRoomId()).emit('player_joined', await fetchUser(player_id));           // Emit the new player to the room
 
         socket.emit('room_joined', {
             roomId: room.getRoomId(),
@@ -68,7 +69,7 @@ module.exports = (socket, io) => {
             roomCode: room.getRoomCode(),
             host: room.getHost(),
             isHost: false,
-            players: room.getPlayers()
+            players: await fetchUsers(room.getPlayers())
         });                                                                     // Emit the room data back to the player
     }
 

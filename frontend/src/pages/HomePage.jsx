@@ -2,10 +2,7 @@ import PlayerCard from "../components/PlayerCard";
 import GameOptions from "../components/GameOptions";
 import { useAuth } from "../context/AuthProvider";
 
-function HomePage() {
-    // Temporary player ID generation
-    localStorage.setItem("player_id", Math.floor(Math.random() * 1000000));
-    
+function HomePage() {    
     const { user } = useAuth();
     
     return (

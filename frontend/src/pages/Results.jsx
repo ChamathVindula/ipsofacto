@@ -2,12 +2,19 @@ import { useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { Fireworks } from "fireworks-js";
 import ProgressBar from "../components/progressBar";
-
+import { useRoom } from "../context/RoomProvider";
 
 function Results() {
   let { state } = useLocation();
   let navigate = useNavigate();
   let fireworksRef = useRef(null);
+  let room = useRoom();
+
+  // A player map to get the player name from the userId
+  let playerMap = room.data.players.reduce((acc, player) => {
+    acc[player.id] = player;
+    return acc;
+  }, {});
 
   useEffect(() => {
     const fireworks = new Fireworks(fireworksRef.current, {
@@ -110,7 +117,7 @@ function Results() {
               >
                 <span className="flex-1 ml-4 text-gray-800 truncate">
                   {emoji && <span className="mr-2">{emoji}</span>}
-                  {userId}
+                  {playerMap[userId] ? playerMap[userId].name : "Unknown Player" }
                 </span>
                 <span className="font-semibold text-blue-600">{score} pts</span>
               </li>

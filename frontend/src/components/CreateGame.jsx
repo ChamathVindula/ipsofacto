@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useSocket } from "../context/SocketProvider";
 import { useRoom } from "../context/RoomProvider";
 import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthProvider";
 
 function CreateGameForm() {
     const [roomName, setRoomName] = useState("");
     const socket = useSocket();
     const room = useRoom();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const onChangeHandle = (e) => {
         setRoomName(e.target.value);
@@ -20,7 +22,7 @@ function CreateGameForm() {
             alert("Please enter a game name!");
             return;
         }
-        socket.emit("create_room", localStorage.getItem('player_id'), roomName);    // Player id is temporarily stored in local storage
+        socket.emit("create_room", user.id, roomName);
         
         setRoomName("");
     }
