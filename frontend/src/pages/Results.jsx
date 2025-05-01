@@ -125,7 +125,7 @@ function Results() {
           })}
         </ul>
       </div>
-      <ProgressBar duration={5000} onComplete={() => {
+      <ProgressBar duration={10000} onComplete={() => {
         if(state.hostNextRound) {
           navigate("/round", { state: { host: state.hostNextRound } })
         } else {
