@@ -26,17 +26,20 @@ const Login = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="w-fit mx-auto flex items-center justify-center mt-20">
             <form
                 onSubmit={handleSubmit}
                 className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
             >
-                <h2 className="text-2xl font-semibold mb-6 text-center">
+                <h2 className="text-2xl font-semibold mb-6 text-center lexend-medium">
                     Login
                 </h2>
 
                 <div className="mb-4">
-                    <label htmlFor="email" className="block text-gray-700 mb-1">
+                    <label
+                        htmlFor="email"
+                        className="block text-gray-700 mb-1 lexend-medium text-sm"
+                    >
                         Email
                     </label>
                     <input
@@ -46,14 +49,14 @@ const Login = () => {
                         value={credentials.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
 
                 <div className="mb-6">
                     <label
                         htmlFor="password"
-                        className="block text-gray-700 mb-1"
+                        className="block text-gray-700 mb-1 lexend-medium text-sm"
                     >
                         Password
                     </label>
@@ -64,20 +67,31 @@ const Login = () => {
                         value={credentials.password}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
 
                 <div className="flex items-center justify-center">
                     <button
                         type="submit"
-                        className="w-[200px] border-1 border-mossgreen-dark text-mossgreen-dark 
-                            font-bold py-2 px-4 rounded-sm hover:bg-mossgreen-dark 
+                        className="w-fit border-1 border-mossgreen-dark text-mossgreen-dark 
+                            font-bold py-1 px-4 rounded-sm hover:bg-mossgreen-dark 
                             transition duration-300 cursor-pointer
-                            hover:text-white hover:border-mossgreen-dark"
+                            hover:text-white hover:border-mossgreen-dark lexend-medium"
                     >
                         Login
                     </button>
+                </div>
+                <div>
+                    <p className="text-center mt-4 text-sm">
+                        Don't have an account?{" "}
+                        <a
+                            onClick={() => navigate("/register")}
+                            className="text-blue-500 hover:underline cursor-pointer"
+                        >
+                            Register here
+                        </a>
+                    </p>
                 </div>
             </form>
         </div>
