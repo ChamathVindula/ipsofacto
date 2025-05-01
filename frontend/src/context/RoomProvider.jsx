@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import { createContext, useContext, useReducer } from "react";
 
 let RoomContext = createContext(null);
 
@@ -58,10 +58,6 @@ function RoomProvider({ children }) {
     };
 
     let [room, dispatch] = useReducer(reducer, initialState);
-
-    useEffect(() => {
-        console.log("Room state updated:", room);
-    }, [room]);
 
     return (
         <RoomContext.Provider value={{ data: room, dispatch }}>
