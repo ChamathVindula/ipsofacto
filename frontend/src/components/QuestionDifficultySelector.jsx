@@ -11,7 +11,7 @@ function QuestionDifficultySelector({
             <div className="w-full flex flex-col">
                 <label
                     htmlFor="questionDifficulty"
-                    className="lexend-medium text-md"
+                    className="lexend-medium text-sm"
                 >
                     Select the difficulty level of the questions:
                 </label>
@@ -22,7 +22,7 @@ function QuestionDifficultySelector({
                                 key={option}
                                 onClick={() => onChangeHandler(option)}
                                 className={`
-                                px-4 py-2 font-semibold text-lg 
+                                px-3 py-1 font-semibold text-lg 
                                 ${
                                     selectedDifficulty === option
                                         ? "bg-mossgreen-light text-white"

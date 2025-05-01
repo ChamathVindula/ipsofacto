@@ -36,14 +36,14 @@ function GameSetup() {
                 <fieldset className="flex flex-col my-2">
                     <label
                         htmlFor="roundCount"
-                        className="lexend-medium text-md font-medium text-gray-700"
+                        className="lexend-medium text-md text-gray-700"
                     >
                         Number of Rounds
                     </label>
                     <input
                         type="number"
                         id="roundCount"
-                        className="mt-1 p-2 border border-gray-300 rounded-md"
+                        className="mt-1 p-2 border border-gray-300 rounded-md text-sm"
                         min="1"
                         max="10"
                         step="1"
@@ -61,7 +61,7 @@ function GameSetup() {
                     <input
                         type="number"
                         id="pointsPerQuestion"
-                        className="mt-1 p-2 border border-gray-300 rounded-md"
+                        className="mt-1 p-2 border border-gray-300 rounded-md text-sm"
                         min="0.5"
                         max="100"
                         step="0.5"
@@ -69,10 +69,10 @@ function GameSetup() {
                         onChange={pointsPerQuestionChangeHandler}
                     />
                 </fieldset>
-                <fieldset className="flex flex-col my-2">
+                <fieldset className="flex justify-center my-2">
                     <button
                         type="submit"
-                        className="mt-4 bg-mossgreen-dark text-white font-bold py-2 px-4 rounded-sm transition duration-300 cursor-pointer active:scale-95"
+                        className="w-fit bg-mossgreen-dark text-white font-bold py-2 px-4 rounded-sm transition duration-300 cursor-pointer active:scale-95"
                     >
                         Start Game
                     </button>

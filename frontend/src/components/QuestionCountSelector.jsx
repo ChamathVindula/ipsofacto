@@ -7,7 +7,7 @@ function QuestionCountSelector({ min, max, step, onChangeHandler }) {
             <div className="w-full flex flex-col">
                 <label
                     htmlFor="questionCount"
-                    className="lexend-medium text-md"
+                    className="lexend-medium text-sm"
                 >
                     Select the number of questions:
                 </label>
