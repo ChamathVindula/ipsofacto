@@ -11,7 +11,7 @@ import protect from "./protect";
 
 const routes = [
     {
-        path: "/",  // Base path for the application
+        path: "/", // Base path for the application
         Component: Layout,
         children: [
             {

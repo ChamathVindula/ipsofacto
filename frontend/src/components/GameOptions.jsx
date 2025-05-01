@@ -6,8 +6,14 @@ import JoinGameForm from "./JoinGameForm";
 function GameOptions() {
     return (
         <CardSmall>
-            <InteractiveDropDownForm button_text={"Create Game"} form={<CreateGameForm  />}/>
-            <InteractiveDropDownForm button_text={"Join Game"} form={<JoinGameForm />}/>
+            <InteractiveDropDownForm
+                button_text={"Create Game"}
+                form={<CreateGameForm />}
+            />
+            <InteractiveDropDownForm
+                button_text={"Join Game"}
+                form={<JoinGameForm />}
+            />
         </CardSmall>
     );
 }

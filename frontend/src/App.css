@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-    --color-mossgreen-light: #1DCD9F;
+    --color-mossgreen-light: #1dcd9f;
     --color-mossgreen-dark: #169976;
     --color-grey-dark: #222222;
 
-    --color-properpurple: #591FCE;
-    --color-propertaqua: #0C9CEE;
-    --color-properteal: #3DBDC2;
-    --color-limegreen: #A1F480;
+    --color-properpurple: #591fce;
+    --color-propertaqua: #0c9cee;
+    --color-properteal: #3dbdc2;
+    --color-limegreen: #a1f480;
 
-    --color-soothingbg: #F8FAFC;
+    --color-soothingbg: #f8fafc;
 }
 
 .sour-gummy-light {
@@ -18,8 +18,7 @@
     font-optical-sizing: auto;
     font-weight: 100;
     font-style: normal;
-    font-variation-settings:
-        "wdth" 100;
+    font-variation-settings: "wdth" 100;
 }
 
 .sour-gummy-medium {
@@ -27,8 +26,7 @@
     font-optical-sizing: auto;
     font-weight: 450;
     font-style: normal;
-    font-variation-settings:
-        "wdth" 100;
+    font-variation-settings: "wdth" 100;
 }
 
 .sour-gummy-bold {
@@ -36,8 +34,7 @@
     font-optical-sizing: auto;
     font-weight: 900;
     font-style: normal;
-    font-variation-settings:
-        "wdth" 100;
+    font-variation-settings: "wdth" 100;
 }
 
 .lexend-light {

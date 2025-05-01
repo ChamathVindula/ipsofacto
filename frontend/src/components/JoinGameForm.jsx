@@ -28,21 +28,21 @@ function JoinGameForm() {
     };
 
     useEffect(() => {
-        if(!socket) return;
+        if (!socket) return;
 
         socket.on("room_joined", (roomData) => {
             room.dispatch({ type: "INIT", payload: roomData });
             navigate("/game");
         });
 
-        socket.on('player_in_room', () => {
+        socket.on("player_in_room", () => {
             alert("You are already in the room!");
         });
 
         return () => {
             socket.off("room_joined");
-            socket.off('player_in_room');
-        }
+            socket.off("player_in_room");
+        };
     }, [socket]);
 
     return (
@@ -61,12 +61,12 @@ function JoinGameForm() {
                 placeholder="Enter game code"
                 onChange={onChangeHandle}
             />
-            <button 
+            <button
                 className="mt-4 bg-mossgreen-dark text-white font-bold 
                                 py-2 px-4 rounded-sm hover:bg-mossgreen-dark 
                                 cursor-pointer transition duration-300"
                 onClick={onClickHandler}
-                >
+            >
                 Join
             </button>
         </div>

@@ -57,7 +57,7 @@ function Game() {
 
         socket.on("round_finished", (round, scores, hostNextRound) => {
             console.log("Round finished", round, scores);
-            navigate('/results', { state: { round, scores, hostNextRound } });
+            navigate("/results", { state: { round, scores, hostNextRound } });
         });
 
         return () => {
@@ -72,7 +72,12 @@ function Game() {
         // If there are no more questions, stop the game
         if (currentQuestionIndex >= questions.length) {
             setIsGameFinished(true);
-            socket.emit("player_finshed_round", room.data.roomId, user.id, answers);
+            socket.emit(
+                "player_finshed_round",
+                room.data.roomId,
+                user.id,
+                answers
+            );
             return;
         }
 

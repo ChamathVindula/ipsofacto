@@ -12,23 +12,27 @@ function GameLobby() {
     let navigate = useNavigate();
 
     useEffect(() => {
-        if(!socket) return;
+        if (!socket) return;
 
-        socket.on('game_created', (data) => {
+        socket.on("game_created", (data) => {
             navigate("/round", { state: { host: data.host } });
         });
 
-        socket.on('player_joined', (player) => {
-            room.dispatch({ type: 'ADD_PLAYER', payload: player });
+        socket.on("player_joined", (player) => {
+            room.dispatch({ type: "ADD_PLAYER", payload: player });
         });
 
         return () => {
-            socket.off('game_created');
-            socket.off('player_joined');
-        }
+            socket.off("game_created");
+            socket.off("player_joined");
+        };
     }, []);
 
-    let component = room.data.isHost ? <GameSetup /> : <Banner message="Waiting for the game to begin..." />;
+    let component = room.data.isHost ? (
+        <GameSetup />
+    ) : (
+        <Banner message="Waiting for the game to begin..." />
+    );
 
     return (
         <div className="flex flex-col justify-center items-center">

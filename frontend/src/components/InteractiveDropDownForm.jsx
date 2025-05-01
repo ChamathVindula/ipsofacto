@@ -10,7 +10,7 @@ function InteractiveDropDownForm({ button_text, form }) {
     return (
         <div>
             <div className="p-4">
-                <button 
+                <button
                     className="
                         border-1 border-mossgreen-dark text-mossgreen-dark 
                         font-bold py-2 px-4 rounded-sm hover:bg-mossgreen-dark 
@@ -23,7 +23,7 @@ function InteractiveDropDownForm({ button_text, form }) {
             </div>
             <div
                 className={`${
-                formIsOpen ? 'max-h-full' : 'max-h-0 hidden'
+                    formIsOpen ? "max-h-full" : "max-h-0 hidden"
                 } overflow-hidden transition-all duration-300 bg-white p-4 rounded-md shadow-lg`}
             >
                 {form}

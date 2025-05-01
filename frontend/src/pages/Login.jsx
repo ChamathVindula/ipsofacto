@@ -13,8 +13,8 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const response = await login(credentials.email, credentials.password);
-        
-        if(response.status === 200) {
+
+        if (response.status === 200) {
             navigate("/home");
         } else {
             alert("Invalid credentials");

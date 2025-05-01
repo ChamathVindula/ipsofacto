@@ -4,7 +4,7 @@ let RoomContext = createContext(null);
 
 export const useRoom = () => {
     return useContext(RoomContext);
-}
+};
 
 function RoomProvider({ children }) {
     let initialState = {
@@ -12,11 +12,11 @@ function RoomProvider({ children }) {
         roomName: "",
         roomCode: "",
         host: "",
-        players: []
-    }
+        players: [],
+    };
 
     let reducer = (state, action) => {
-        switch(action.type) {
+        switch (action.type) {
             case "INIT": {
                 return {
                     ...state,
@@ -25,34 +25,37 @@ function RoomProvider({ children }) {
                     roomCode: action.payload.roomCode,
                     host: action.payload.host,
                     isHost: action.payload.isHost,
-                    players: action.payload.players.map(player => {
-                        return { 
+                    players: action.payload.players.map((player) => {
+                        return {
                             id: player.id,
-                            name: player.first_name + " " + player.last_name, 
-                            avatar: "/public/user.png" 
-                        } 
-                    })
+                            name: player.first_name + " " + player.last_name,
+                            avatar: "/public/user.png",
+                        };
+                    }),
                 };
             }
             case "ADD_PLAYER": {
                 let player = action.payload;
                 return {
                     ...state,
-                    players: [...state.players, { 
-                        id: player.id,
-                        name: player.first_name + " " + player.last_name, 
-                        avatar: "/public/user.png" 
-                    }]
+                    players: [
+                        ...state.players,
+                        {
+                            id: player.id,
+                            name: player.first_name + " " + player.last_name,
+                            avatar: "/public/user.png",
+                        },
+                    ],
                 };
             }
             case "SET_GAME": {
                 return {
                     ...state,
-                    game: action.payload.game
+                    game: action.payload.game,
                 };
             }
         }
-    }
+    };
 
     let [room, dispatch] = useReducer(reducer, initialState);
 

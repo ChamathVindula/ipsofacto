@@ -15,9 +15,9 @@ const Register = () => {
             formData.password
         );
 
-        if(response.status === 201) {
-            navigate('/login');
-        } else if(response.status === 400) {
+        if (response.status === 201) {
+            navigate("/login");
+        } else if (response.status === 400) {
             alert("User already exists");
         } else {
             alert("Registration failed");

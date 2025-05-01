@@ -6,5 +6,5 @@ const protect = (Component) => () =>
             <Component />
         </ProtectedRoute>
     );
-    
+
 export default protect;

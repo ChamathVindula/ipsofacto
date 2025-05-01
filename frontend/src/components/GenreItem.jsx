@@ -2,9 +2,9 @@ function GenreItem({ genre, clickHandler }) {
     function getRandomColor() {
         const randomChannel = () => Math.floor(Math.random() * 256); // 0–255
         const hex = [randomChannel(), randomChannel(), randomChannel()]
-          .map(c => c.toString(16).padStart(2, '0'))
-          .join('');
-          
+            .map((c) => c.toString(16).padStart(2, "0"))
+            .join("");
+
         return `#${hex}`;
     }
 
@@ -18,9 +18,7 @@ function GenreItem({ genre, clickHandler }) {
             style={{ backgroundColor: getRandomColor() }} // Default color if genre.color is not defined
             onClick={() => clickHandler({ id: genre.id, name: genre.name })} // Pass the genre object to the click handler
         >
-            <span className="p-2">
-                {genre.name}
-            </span>
+            <span className="p-2">{genre.name}</span>
         </div>
     );
 }

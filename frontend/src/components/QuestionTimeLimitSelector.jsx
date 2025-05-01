@@ -3,9 +3,14 @@ import RoundLobbyItemContainer from "./RoundLobbyItemContainer";
 function QuestionTimeLimitSelector({ min, max, step, onChangeHandler }) {
     return (
         <RoundLobbyItemContainer>
-            <h2 className="sour-gummy-medium text-2xl">Time Limit per Question</h2>
+            <h2 className="sour-gummy-medium text-2xl">
+                Time Limit per Question
+            </h2>
             <div className="w-full flex flex-col">
-                <label htmlFor="questionCount" className="lexend-medium text-md">
+                <label
+                    htmlFor="questionCount"
+                    className="lexend-medium text-md"
+                >
                     Select the time limit per question (in seconds):
                 </label>
                 <input

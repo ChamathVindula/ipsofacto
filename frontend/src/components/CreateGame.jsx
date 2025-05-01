@@ -13,42 +13,46 @@ function CreateGameForm() {
 
     const onChangeHandle = (e) => {
         setRoomName(e.target.value);
-    }
+    };
 
     const onClickHandler = (e) => {
         e.preventDefault();
-        
+
         if (roomName.trim() === "") {
             alert("Please enter a game name!");
             return;
         }
         socket.emit("create_room", user.id, roomName);
-        
-        setRoomName("");
-    }
-    
-    useEffect(() => {
-        if(!socket) return;
 
-        socket.on('room_created', (roomData) => {
+        setRoomName("");
+    };
+
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on("room_created", (roomData) => {
             room.dispatch({ type: "INIT", payload: roomData });
             navigate("/game");
         });
-        
     }, [socket]);
 
     return (
         <div className="flex flex-col">
-            <label htmlFor="gameName" className="text-sm font-medium text-gray-700">Game Name</label>
-            <input 
-                type="text" 
+            <label
+                htmlFor="gameName"
+                className="text-sm font-medium text-gray-700"
+            >
+                Game Name
+            </label>
+            <input
+                type="text"
                 id="gameName"
                 value={roomName}
-                className="mt-1 p-2 border border-gray-300 rounded-md" 
+                className="mt-1 p-2 border border-gray-300 rounded-md"
                 placeholder="Enter game name"
                 onChange={onChangeHandle}
             />
-            <button 
+            <button
                 className="mt-4 bg-mossgreen-dark text-white font-bold py-2 px-4 rounded-sm hover:bg-mossgreen-dark cursor-pointer transition duration-300"
                 onClick={onClickHandler}
             >
