@@ -64,12 +64,11 @@ module.exports = (socket, io) => {
      */
     const playerReady = async (room_id, player_id) => {
         const roomId = generateRoomId(room_id);
-        
+
         let setPlayerReady = async () => {
             let unlock = await acquireLock(roomId);
 
-            if(typeof unlock === "function") {
-                console.error("Managed to acquire lock for player: ", player_id);
+            if (typeof unlock === "function") {
                 const roomData = await getRoom(room_id);
 
                 if (!roomData) {
@@ -85,7 +84,9 @@ module.exports = (socket, io) => {
                 room.getGame().playerReady();
 
                 if (room.getGame().allPlayersReady()) {
-                    const questions = room.getGame().getQuestionsOfCurrentRound();
+                    const questions = room
+                        .getGame()
+                        .getQuestionsOfCurrentRound();
                     // Start the round five seconds after the round is created
                     // This ensures that all players start the round at the same time
                     const startRoundAt = Date.now() + 5000;
@@ -100,10 +101,12 @@ module.exports = (socket, io) => {
                 unlock();
             } else {
                 console.log("Failed to acquire lock for player: ", player_id);
-                setTimeout(() => { setPlayerReady() }, 200); // 200 ms delay before retrying
+                setTimeout(() => {
+                    setPlayerReady();
+                }, 200); // 200 ms delay before retrying
             }
-        }
-        
+        };
+
         setPlayerReady();
     };
 
@@ -160,12 +163,15 @@ module.exports = (socket, io) => {
      */
     const pushAnswers = async (room_id, player_id, answers) => {
         let roomId = generateRoomId(room_id);
-        
+
         let pushPlayerAnswers = async () => {
             let unlock = await acquireLock(roomId);
-            
-            if(typeof unlock === "function") {
-                console.error("Managed to acquire lock for player (push): ", player_id);
+
+            if (typeof unlock === "function") {
+                console.error(
+                    "Managed to acquire lock for player (push): ",
+                    player_id
+                );
                 const roomData = await getRoom(room_id);
 
                 if (!roomData) {
@@ -185,16 +191,28 @@ module.exports = (socket, io) => {
                     const scores = room.getGame().getScoresOfCurrentRound();
                     const isLastRound = room.getGame().isLastRound();
                     const players = room.getPlayers();
-                    const hostNextRound = isLastRound ? null : players[Math.floor(Math.random() * players.length)];
-                    io.to(room.getRoomId()).emit("round_finished", round, scores, hostNextRound); // Notify all players that the round is finished
+                    const hostNextRound = isLastRound
+                        ? null
+                        : players[Math.floor(Math.random() * players.length)];
+                    io.to(room.getRoomId()).emit(
+                        "round_finished",
+                        round,
+                        scores,
+                        hostNextRound
+                    ); // Notify all players that the round is finished
                 }
                 persistRoom(room);
                 unlock();
             } else {
-                console.error("Failed to acquire lock for player (push): ", player_id);
-                setTimeout(() => { pushPlayerAnswers() }, 200); // 200 ms delay before retrying
+                console.error(
+                    "Failed to acquire lock for player (push): ",
+                    player_id
+                );
+                setTimeout(() => {
+                    pushPlayerAnswers();
+                }, 200); // 200 ms delay before retrying
             }
-        }
+        };
 
         pushPlayerAnswers();
     };

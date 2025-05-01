@@ -1,19 +1,19 @@
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 class Question {
     /**
-     * 
-     * @param {string} question 
-     * @param {string} answer 
-     * @param {Array<string>} distractions 
-     * @param {object} player_answers 
+     *
+     * @param {string} question
+     * @param {string} answer
+     * @param {Array<string>} distractions
+     * @param {object} player_answers
      */
     constructor(id, question, answer, distractions, player_answers = {}) {
-        this.id = id ?? uuidv4();               // Id could be null if the question was just created
+        this.id = id ?? uuidv4(); // Id could be null if the question was just created
         this.question = question;
         this.answer = answer;
         this.distractions = distractions;
-        this.player_answers = player_answers;   // {player_id: answer}
+        this.player_answers = player_answers; // {player_id: answer}
     }
 
     getId() {
@@ -25,8 +25,8 @@ class Question {
             id: this.id,
             question: this.question,
             answer: this.answer,
-            distractions: this.distractions.sort(() => Math.random() - 0.5)
-        }
+            distractions: this.distractions.sort(() => Math.random() - 0.5),
+        };
     }
 
     getQuestion() {
@@ -59,8 +59,8 @@ class Question {
             question: this.question,
             answer: this.answer,
             distractions: this.distractions,
-            player_answers: this.player_answers
-        }
+            player_answers: this.player_answers,
+        };
     }
 }
 

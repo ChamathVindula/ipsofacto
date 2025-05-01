@@ -1,15 +1,23 @@
-const Round = require('./Round.js');
+const Round = require("./Round.js");
 
 class Game {
     /**
-     * 
-     * @param {string} status 
-     * @param {number} points_per_question 
-     * @param {number} number_of_rounds 
-     * @param {number} current_round 
-     * @param {Array<Round>} rounds 
+     *
+     * @param {string} status
+     * @param {number} points_per_question
+     * @param {number} number_of_rounds
+     * @param {number} current_round
+     * @param {Array<Round>} rounds
      */
-    constructor(player_count, status, points_per_question, number_of_rounds, current_round = 0, rounds = [], players_ready = 0) {
+    constructor(
+        player_count,
+        status,
+        points_per_question,
+        number_of_rounds,
+        current_round = 0,
+        rounds = [],
+        players_ready = 0
+    ) {
         this.player_count = player_count;
         this.status = status;
         this.points_per_question = points_per_question;
@@ -28,27 +36,29 @@ class Game {
     }
 
     endRound() {
-        this.rounds[this.current_round-1].complete();
+        this.rounds[this.current_round - 1].complete();
     }
 
     gameInProgress() {
-        return this.status === 'in_progress';
+        return this.status === "in_progress";
     }
 
     getQuestionsOfCurrentRound() {
-        return this.rounds[this.current_round-1].getQuestions();
+        return this.rounds[this.current_round - 1].getQuestions();
     }
 
     getScoresOfCurrentRound() {
-        let answers = this.rounds[this.current_round-1].getPlayerAnswers();
+        let answers = this.rounds[this.current_round - 1].getPlayerAnswers();
         let scores = {};
 
         Object.entries(answers).forEach(([question_id, player_answers]) => {
             Object.entries(player_answers).forEach(([player_id, answer]) => {
-                if(!scores[player_id]) {
+                if (!scores[player_id]) {
                     scores[player_id] = 0;
                 }
-                scores[player_id] = parseFloat(scores[player_id]) + (answer ? parseFloat(this.points_per_question) : 0);
+                scores[player_id] =
+                    parseFloat(scores[player_id]) +
+                    (answer ? parseFloat(this.points_per_question) : 0);
             });
         });
 
@@ -57,14 +67,17 @@ class Game {
 
     async setRound(round_data) {
         try {
-            if(!round_data) {
-                throw new Error('Invalid round data');
+            if (!round_data) {
+                throw new Error("Invalid round data");
             }
             let newRound = this.createRound(round_data);
-            let questionsGeneratedSuccessfully = await newRound.generateQuestions();
+            let questionsGeneratedSuccessfully =
+                await newRound.generateQuestions();
 
-            if(!questionsGeneratedSuccessfully) {
-                throw new Error('Failed to generate questions at the game level');
+            if (!questionsGeneratedSuccessfully) {
+                throw new Error(
+                    "Failed to generate questions at the game level"
+                );
             }
             this.rounds.push(newRound);
             this.moveToNextRound();
@@ -77,21 +90,21 @@ class Game {
 
     createRound(round_data) {
         return new Round(
-            round_data.status, 
-            round_data.genre, 
-            round_data.difficulty, 
-            round_data.number_of_questions, 
+            round_data.status,
+            round_data.genre,
+            round_data.difficulty,
+            round_data.number_of_questions,
             round_data.time_per_question,
             round_data.questions ?? [],
             round_data.current_question ?? 0,
-            round_data.players_answered ?? 0,
+            round_data.players_answered ?? 0
         );
     }
 
     hydrateRounds(rounds) {
-        if(!rounds.length) return [];
+        if (!rounds.length) return [];
 
-        return rounds.map(round => {
+        return rounds.map((round) => {
             return this.createRound(round);
         });
     }
@@ -105,12 +118,21 @@ class Game {
     }
 
     pushPlayerAnswers(player_id, answers) {
-        this.rounds[this.current_round-1].pushPlayerAnswers(player_id, answers);
+        this.rounds[this.current_round - 1].pushPlayerAnswers(
+            player_id,
+            answers
+        );
     }
 
     allPlayersFinishedRound() {
-        console.log('Players answered count: ', this.rounds[this.current_round-1].playersAnsweredCount());
-        return this.rounds[this.current_round-1].playersAnsweredCount() === this.player_count;
+        console.log(
+            "Players answered count: ",
+            this.rounds[this.current_round - 1].playersAnsweredCount()
+        );
+        return (
+            this.rounds[this.current_round - 1].playersAnsweredCount() ===
+            this.player_count
+        );
     }
 
     allPlayersReady() {
@@ -118,24 +140,24 @@ class Game {
     }
 
     moveToNextRound() {
-        if(this.current_round >= this.number_of_rounds) return;
-        
+        if (this.current_round >= this.number_of_rounds) return;
+
         this.current_round++;
     }
 
     isLastRound() {
         return this.current_round >= this.number_of_rounds;
     }
-    
+
     serialise() {
         return {
             status: this.status,
             points_per_question: this.points_per_question,
             number_of_rounds: this.number_of_rounds,
             current_round: this.current_round,
-            rounds: this.rounds.map(round => round.serialise()),
-            players_ready: this.players_ready
-        }
+            rounds: this.rounds.map((round) => round.serialise()),
+            players_ready: this.players_ready,
+        };
     }
 }
 

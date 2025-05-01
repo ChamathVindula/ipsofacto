@@ -26,7 +26,7 @@ module.exports.hydrateRoom = (room_data) => {
 module.exports.generateRoomId = (room_id) => {
     const ROOM_PREFIX = process.env.REDIS_ROOM_PREFIX || "ipsft_game_room:";
     return `${ROOM_PREFIX}${room_id}`;
-}
+};
 
 /**
  * Persist the game room state to Redis.
@@ -63,16 +63,17 @@ module.exports.getRoom = (roomId) => {
 };
 
 module.exports.setRoomIdToCode = (roomCode, roomId) => {
-    if(typeof roomId !== "string" || roomId === "") {
+    if (typeof roomId !== "string" || roomId === "") {
         throw new Error("Invalid roomId");
     }
-    if(typeof roomCode !== "string" || roomCode === "") {
+    if (typeof roomCode !== "string" || roomCode === "") {
         throw new Error("Invalid roomCode");
     }
-    const KEY = process.env.REDIS_ROOM_CODES_COLLECTION || "ipsft_game_room_codes";
+    const KEY =
+        process.env.REDIS_ROOM_CODES_COLLECTION || "ipsft_game_room_codes";
 
     redis.get(KEY, (err, data) => {
-        if(err) {
+        if (err) {
             throw err;
         }
         data = !data ? {} : JSON.parse(data);
@@ -82,15 +83,16 @@ module.exports.setRoomIdToCode = (roomCode, roomId) => {
 };
 
 module.exports.getRoomIdFromCode = (roomCode) => {
-    if(typeof roomCode !== "string" || roomCode === "") {
+    if (typeof roomCode !== "string" || roomCode === "") {
         throw new Error("Invalid roomCode");
     }
-    const KEY = process.env.REDIS_ROOM_CODES_COLLECTION || "ipsft_game_room_codes";
+    const KEY =
+        process.env.REDIS_ROOM_CODES_COLLECTION || "ipsft_game_room_codes";
 
     return new Promise((resolve, reject) => {
         redis.get(KEY, (err, data) => {
-            if(err) return reject(err);
-            if(!data) return resolve(null);
+            if (err) return reject(err);
+            if (!data) return resolve(null);
 
             try {
                 data = JSON.parse(data);
@@ -100,4 +102,4 @@ module.exports.getRoomIdFromCode = (roomCode) => {
             }
         });
     });
-}
+};

@@ -1,12 +1,12 @@
-const Game = require('./Game.js');
-const { v4: uuidv4 } = require('uuid');
+const Game = require("./Game.js");
+const { v4: uuidv4 } = require("uuid");
 
 class Room {
     /**
-     * @param {number} host 
+     * @param {number} host
      */
     constructor(host = null) {
-        if(!host) {
+        if (!host) {
             return;
         }
         this.roomId = this.generateRoomId();
@@ -51,8 +51,8 @@ class Room {
 
     setGame(game_data) {
         try {
-            if(!game_data) {
-                throw new Error('Invalid game data');
+            if (!game_data) {
+                throw new Error("Invalid game data");
             }
             this.game = this.createGame(game_data);
         } catch (error) {
@@ -61,15 +61,15 @@ class Room {
     }
 
     createGame(game_data) {
-        if(!game_data) return null;
+        if (!game_data) return null;
 
         return new Game(
-            game_data.player_count ?? this.players.length, 
-            game_data.status, 
-            game_data.points_per_question, 
-            game_data.number_of_rounds, 
-            game_data.current_round, 
-            game_data.rounds, 
+            game_data.player_count ?? this.players.length,
+            game_data.status,
+            game_data.points_per_question,
+            game_data.number_of_rounds,
+            game_data.current_round,
+            game_data.rounds,
             game_data.players_ready
         );
     }
@@ -84,22 +84,25 @@ class Room {
 
     generateRoomCode(roomId) {
         // The room id is a uuid, so we can take the third character of each segment
-        return roomId.split('-').map(segment => segment[2]).join('');
+        return roomId
+            .split("-")
+            .map((segment) => segment[2])
+            .join("");
     }
 
     addPlayer(player) {
-        if(isNaN(player)) {
-            throw new Error('Invalid player ID');
+        if (isNaN(player)) {
+            throw new Error("Invalid player ID");
         }
         this.players.push(player);
     }
 
     playerExists(player_id) {
-        return this.players.some(playerId => playerId === player_id);
+        return this.players.some((playerId) => playerId === player_id);
     }
 
     removePlayer(playerId) {
-        this.players = this.players.filter(player => player.id !== playerId);
+        this.players = this.players.filter((player) => player.id !== playerId);
     }
 
     serialise() {
@@ -108,8 +111,8 @@ class Room {
             roomCode: this.roomCode,
             host: this.host,
             players: this.players,
-            game: this.game ? this.game.serialise() : null
-        }
+            game: this.game ? this.game.serialise() : null,
+        };
     }
 }
 
