@@ -64,7 +64,7 @@ function Game() {
             socket.off("round_starting");
             socket.off("round_finished");
         };
-    }, [socket]);
+    }, [socket, room, navigate]);
 
     useEffect(() => {
         clearTimer();

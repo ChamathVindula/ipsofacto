@@ -34,7 +34,11 @@ function CreateGameForm() {
             room.dispatch({ type: "INIT", payload: roomData });
             navigate("/game");
         });
-    }, [socket]);
+
+        return () => {
+            socket.off("room_created");
+        }
+    }, [socket, room, navigate]);
 
     return (
         <div className="flex flex-col">

@@ -26,7 +26,7 @@ function GameLobby() {
             socket.off("game_created");
             socket.off("player_joined");
         };
-    }, []);
+    }, [socket, room, navigate]);
 
     let component = room.data.isHost ? (
         <GameSetup />

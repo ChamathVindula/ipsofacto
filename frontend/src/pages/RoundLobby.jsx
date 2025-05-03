@@ -79,7 +79,7 @@ function RoundLobby() {
         return () => {
             socket.off("round_created");
         };
-    }, []);
+    }, [socket, navigate]);
 
     useEffect(() => {
         // Fetch genres from the API on component mount
